@@ -107,7 +107,18 @@ export const Login = (props) => {
     console.log("Logged in successfully");
   };
   // end sign in with facebook
+ const google = () => {
+   window.open(`http://localhost:5000/auth/google/callback`, "_self");
+ };
 
+ const github = () => {
+   window.open(`http://localhost:5000/auth/github/callback`, "_self");
+ };
+
+ const facebook = () => {
+   window.open(`http://localhost:5000/auth/facebook/callback`, "_self");
+ };
+ 
   return (
     <div className="parent">
       <div className="auth-form-container">
@@ -148,26 +159,23 @@ export const Login = (props) => {
             type="submit"
             onClick={checkAuth}
           >
-            <p className="btn text-white" >
-               Login
-             </p>
-           
+            <p className="btn text-white">Login</p>
           </button>
         </form>
         <div className="login-social d-flex">
-          <p style={{fontSize:'18px'}}>Or login with </p>
-          <button className="soc-log-btn">
+          <p style={{ fontSize: "18px" }}>Or login with </p>
+          <button className="soc-log-btn" onClick={github}>
             <FaLinkedinIn />
           </button>
-          <button className="soc-log-btn" onClick={handleGoogleLogin}>
+          <button className="soc-log-btn" onClick={google}>
             <FaGoogle />
           </button>
-          <button className="soc-log-btn" onClick={handleFacebookLogin}>
+          <button className="soc-log-btn" onClick={facebook}>
             <FaFacebookF />
           </button>
         </div>
         <div className="switch1">
-          <p style={{fontSize:'15px'}}>Not a member yet ? </p>
+          <p style={{ fontSize: "15px" }}>Not a member yet ? </p>
           <button
             className="link-btn"
             onClick={() => props.onFormSwitch("register")}

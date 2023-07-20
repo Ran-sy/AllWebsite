@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
+    
     trim: true,
     minlength: 8,
     validate(val) {
@@ -41,7 +41,7 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: true,
+  
     unique: true,
     lowercase: true,
     validate(val) {
@@ -81,7 +81,7 @@ userSchema.methods.generateToken = async function () {
   const token = jwt.sign(
     {
       _id: user._id.toString()
-    }, process.env.SECRET_KEY)
+    }, "process.env.SECRET_KEY")
   user.tokens = user.tokens.concat(token)
   await user.save()
   return token

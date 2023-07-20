@@ -5,14 +5,17 @@ const FacebookStrategy = require("passport-facebook").Strategy;
 
 const User = require("./Models/userModel");
 
-const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
-const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+// const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+// const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 
-const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
-const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
+const GITHUB_CLIENT_ID = "c85635160d89f53c5dc8";
+const GITHUB_CLIENT_SECRET = "0f247fb50f46493274df9965762ccdeafe6322b7";
 
-const FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID;
-const FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET;
+const FACEBOOK_APP_ID = 631204805643898;
+const FACEBOOK_APP_SECRET = "a58e6608f99d6e2b1fceea0b881a939d";
+const GOOGLE_CLIENT_ID =
+  "154527221504-i823onaq0kidckrogrluhn4m8ck3fg88.apps.googleusercontent.com";
+const GOOGLE_CLIENT_SECRET = "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";
 
 passport.use(
   new GoogleStrategy(
@@ -20,22 +23,27 @@ passport.use(
       clientID: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
       callbackURL: "/auth/google/callback",
+      scope: ["profile", "email"],
     },
     async function (accessToken, refreshToken, profile, done) {
       try {
         const existingUser = await User.findOne({ googleId: profile.id });
         if (existingUser) {
           console.log("user is there");
+          const token = await existingUser.generateToken();
+
           done(null, existingUser);
         } else {
           const newUser = {
             googleId: profile.id,
             name: profile.displayName,
-            photo: profile.photos[0].value,
+
             email: profile.emails[0].value,
           };
           const user = await User.create(newUser);
           console.log("creating new user");
+          const token = await user.generateToken();
+
           done(null, user);
         }
       } catch (err) {
@@ -50,22 +58,28 @@ passport.use(
     {
       clientID: GITHUB_CLIENT_ID,
       clientSecret: GITHUB_CLIENT_SECRET,
-      callbackURL: "/auth/linkedin/callback",
+      callbackURL: "/auth/github/callback",
+      scope: ["profile", "email"],
     },
     async function (accessToken, refreshToken, profile, done) {
       try {
-        const existingUse = await User.findOne({ gitId: profile.id });
-        if (existingUse) {
+        console.log(profile);
+        const existingUser = await User.findOne({ gitId: profile.id });
+        if (existingUser) {
           console.log("user is there");
-          done(null, existingUse);
+          const token = await existingUser.generateToken();
+
+          done(null, existingUser);
         } else {
+          console.log(profile);
           const newUser = {
             gitId: profile.id,
-            name: profile.displayName,
-            photo: profile.photos[0].value,
-            email: profile.emails[0].value,
+            name: profile.username,
+            email: profile.profileUrl,
           };
           const user = await User.create(newUser);
+          const token = await existingUser.generateToken();
+
           console.log("creating new user");
           done(null, user);
         }
@@ -82,23 +96,28 @@ passport.use(
       clientID: FACEBOOK_APP_ID,
       clientSecret: FACEBOOK_APP_SECRET,
       callbackURL: "/auth/facebook/callback",
-      profileFields: ["id", "displayName", "emails", "picture.type(large)"],
+
+      profileFields: ["id", "emails", "name", "displayName"],
     },
     async function (accessToken, refreshToken, profile, done) {
+      console.log(profile);
       try {
         const existingUser = await User.findOne({ facebookId: profile.id });
         if (existingUser) {
           console.log("user is there");
+          const token = await existingUser.generateToken();
+
           done(null, existingUser);
         } else {
+          console.log(profile);
           const newUser = {
             facebookId: profile.id,
             name: profile.displayName,
-            photo: profile.photos[0].value,
-            email: profile.emails[0].value,
           };
           const user = await User.create(newUser);
           console.log("creating new user");
+          const token = await existingUser.generateToken();
+
           done(null, user);
         }
       } catch (err) {
