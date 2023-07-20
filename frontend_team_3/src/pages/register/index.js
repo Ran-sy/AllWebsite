@@ -13,6 +13,7 @@ import { useDispatch } from "react-redux";
 import axios from "axios";
 import { signup } from "../../features/user";
 import { Localhost } from "../../config/api";
+import { saveState } from "../../features/localState";
 
 const Resgister = () => {
     const dispatch = useDispatch()
@@ -38,11 +39,17 @@ const Resgister = () => {
             const postUser = async () => {
                 try {
                     const res = await axios.post(`${Localhost}/api/auth/signup`, { ...payload, password: password.value })
-                    console.log('user have been added successfully: ' + JSON.stringify(res.data.token))
-                    dispatch(signup({ ...payload }))
+                    const userInfo = { ...payload,
+                        token: JSON.stringify(res.data.token), 
+                        id: JSON.stringify(res.data.user._id),
+                        role: JSON.stringify(res.data.user.role)
+                     }
+                    console.log('user have been added successfully: ' + userInfo)
+                    saveState(userInfo)
+                    dispatch(signup())
                     navigate("/wizard", { replace: true })
                 } catch (e) {
-                    console.log('unable to add data: ' + e.message)
+                    console.log('unable to add data: ' + e)
                 }
             }
             postUser()
