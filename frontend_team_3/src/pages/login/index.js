@@ -13,6 +13,7 @@ import { useDispatch } from "react-redux";
 import axios from "axios";
 import { signup } from "../../features/user";
 import { Localhost }from "../../config/api";
+import { saveState } from '../../features/localState';
 
 export const Login = (props) => {
   const dispatch = useDispatch()
@@ -30,11 +31,18 @@ export const Login = (props) => {
       const loginUser = async() => {
         try{
           const res = await axios.post(`${Localhost}/api/auth/login`, {email: email.value, password: password.value})
-          console.log('user have been added successfully: ' + JSON.stringify(res.data.token))
-          dispatch(signup({email: email.value})) 
+          const userInfo = {
+            email: email.value, token: JSON.stringify(res.data.token), 
+            id: JSON.stringify(res.data.user._id),
+            name: JSON.stringify(res.data.user.name),
+            role: JSON.stringify(res.data.user.role)
+          }
+          console.log(userInfo)
+          saveState(userInfo)
+          dispatch(signup(userInfo)) 
           navigate("/", {replace: true})
         }catch(e){
-          console.log('unable to add data: '+e.message)
+          console.log('unable to login: '+e)
         }
       }
       loginUser()
