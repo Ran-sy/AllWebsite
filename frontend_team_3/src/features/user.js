@@ -1,7 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { loadState } from './localState';
 
-const initialStateValue = {
-    name: "", email: "", role: "", token: "",
+const localState = loadState();
+
+const initialStateValue = localState || {
+    name: "", email: "", role: "", token: "", id: "",
     googleId: "", gitId: "", facebookId: "", cvPath: "",
 }
 export const userSlice = createSlice({
