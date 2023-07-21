@@ -6,16 +6,16 @@ import Mentee from '../../pages/mentorProfile/index';
 const Wizard = () => {
   const options = [
     {
-      label: "Mentor",
-      value: "Mentor",
+      label: "mentor",
+      value: "mentor",
     },
     {
-      label: "Mentee",
-      value: "Mentee",
+      label: "mentee",
+      value: "mentee",
     },
   ];
   const [choose, setChoose] = useState("")
-  if (choose === "Mentee") {
+  if (choose === "mentee") {
     return (
       <Mentee options={options} choose={choose} setChoose={setChoose} />
     );

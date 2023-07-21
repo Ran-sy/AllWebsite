@@ -32,12 +32,11 @@ export const Login = (props) => {
         try{
           const res = await axios.post(`${Localhost}/api/auth/login`, {email: email.value, password: password.value})
           const userInfo = {
-            email: email.value, token: JSON.stringify(res.data.token), 
+            email: email.value, token: JSON.stringify(res.data.token).slice(1, -1), 
             id: JSON.stringify(res.data.user._id),
             name: JSON.stringify(res.data.user.name),
-            role: JSON.stringify(res.data.user.role)
+            role: JSON.stringify(res.data.user.role).slice(1, -1)
           }
-          console.log(userInfo)
           saveState(userInfo)
           dispatch(signup(userInfo)) 
           navigate("/", {replace: true})

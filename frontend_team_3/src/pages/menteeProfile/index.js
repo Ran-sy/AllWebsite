@@ -3,10 +3,25 @@ import { useState } from "react";
 import { BiSolidDownArrow } from "react-icons/bi";
 import { GiCancel } from "react-icons/gi";
 import { BiError } from "react-icons/bi";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import axios from "axios";
+import { signup } from "../../features/user";
+import { Localhost }from "../../config/api";
+import { saveState } from '../../features/localState';
 
 const Mentee = ({ options, choose, setChoose }) => {
+    const user = useSelector(state => state.user.value)
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
     const [file, setFile] = useState(null);
+    const [profile, setProfile] = useState({
+        lookingFor: choose,
+        designation: 'Computer Science',
+        availableForHiring: false,
+        skills: [],
+        location: ''
+    })
     const [errors, setErros] = useState({
         skills: false,
         location: false,
@@ -14,6 +29,25 @@ const Mentee = ({ options, choose, setChoose }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        const addNewMentee = async () =>{
+            try{
+                console.log('add new mentee')
+                const config ={headers: {'Authorization': `Bearer ${user.token}`}}
+
+                await axios.post(`${Localhost}/api/v1/menteeProfile`, profile, config);
+                if(file){
+                    await axios.post(`${Localhost}/api/v1/cv/upload`, file, config)}
+                const userInfo = { ...user, role: choose === 'mentee'? 'mentor': 'mentee' }
+                
+                dispatch(signup(userInfo)) 
+                saveState(userInfo)
+                navigate("/", {replace: true})
+            }catch(e){
+                console.log('unable create prfile: ' + e)
+            }
+        }
+        if(profile.location && profile.skills) addNewMentee()
+        else console.log('all info are required', profile.location, profile.skills)
     };
 
     const handleFocusInput = (e) => {
@@ -27,16 +61,6 @@ const Mentee = ({ options, choose, setChoose }) => {
             ...prev,
             [name]: e.target.value.trim().length === 0,
         }));
-    };
-
-    const handleChange = (e) => {
-        setChoose(e.target.value);
-        console.log(choose);
-    };
-
-    const selectFile = (e) => {
-        setFile(e.target.files[0]);
-        console.log(file);
     };
 
     return (
@@ -59,7 +83,9 @@ const Mentee = ({ options, choose, setChoose }) => {
                                 id="products"
                                 placeholder="select type"
                                 value={choose}
-                                onChange={handleChange}
+                                onChange={
+                                    e=>setChoose(e.target.value)
+                                }
                                 style={{ background: 'transparent' }}
                             >
                                 {options?.map((option) => (
@@ -75,7 +101,12 @@ const Mentee = ({ options, choose, setChoose }) => {
                                 <BiSolidDownArrow />
                             </div>
 
-                            <select className="data" placeholder="select type" style={{ background: 'transparent' }}>
+                            <select className="data" 
+                            placeholder="select type" 
+                            style={{ background: 'transparent' }}
+                            onChange={ e=>setProfile({
+                                ...profile, designation: e.target.value
+                            }) } >
                                 <option className="choose2">Computer scince</option>
                                 <option className="choose1">Engineering</option>
                                 <option className="choose2">Artificial Intelligence</option>
@@ -90,7 +121,7 @@ const Mentee = ({ options, choose, setChoose }) => {
                                 type="file"
                                 id="upload-file"
                                 accept=".pdf"
-                                onChange={selectFile}
+                                onChange={ e=>setFile(e.target.files[0]) }
                             />
                             <div className="d-flex justify-content-between">
                                 {file && (
@@ -114,7 +145,10 @@ const Mentee = ({ options, choose, setChoose }) => {
                         <div className="p-3 draft grid-draft draft-order4">
                             <label className="hire">
                                 <h4 className="title-text">Available for hiring</h4>
-                                <input className="data check" type="checkbox" />
+                                <input className="data check"
+                                 type="checkbox"
+                                 onChange={ e=> setProfile({ ...profile, availableForHiring: true})}
+                                  />
                                 <span className="checkmark"></span>
                             </label>
                         </div>
@@ -126,6 +160,9 @@ const Mentee = ({ options, choose, setChoose }) => {
                                 type="text"
                                 onFocus={handleFocusInput}
                                 onBlur={handleBlurInput}
+                                onChange={
+                                    e=>setProfile({...profile, skills: [e.target.value]})
+                                }
                                 placeholder={errors.skills ? "Input text" : "Skills"}
                             />
                             {errors.skills && (
@@ -142,6 +179,9 @@ const Mentee = ({ options, choose, setChoose }) => {
                                 type="text"
                                 onFocus={handleFocusInput}
                                 onBlur={handleBlurInput}
+                                onChange={
+                                    e=> setProfile({...profile, location: e.target.value})
+                                }
                                 placeholder={errors.location ? "Input text" : "Location"}
                             />
                             {errors.location && (
@@ -152,11 +192,9 @@ const Mentee = ({ options, choose, setChoose }) => {
                         </div>
                         <div className="handle"></div>
                         <div className="button1 end">
-                            <Link to='/'>
-                                <button type="button" className="submit" onClick={handleSubmit}>
-                                    Submit
-                                </button>
-                            </Link>
+                            <button type="button" className="submit" onClick={handleSubmit}>
+                                Submit
+                            </button>
                         </div>
                     </div>
                 </div>

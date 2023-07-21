@@ -4,10 +4,9 @@ const User = require('../Models/userModel')
 
 
 const uploadCV = async (req, res) => {
+  try {
   const menteeName = req.body.name;
   const cvPath = req.file.path;
-
-  try {
     const user = await User.findOne({ name: menteeName });
 
     if (!user) {
