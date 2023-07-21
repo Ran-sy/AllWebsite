@@ -13,6 +13,7 @@ import { useDispatch } from "react-redux";
 import axios from "axios";
 import { signup, setToken } from "../../features/user";
 import { Localhost }from "../../config/api";
+import { saveState } from '../../features/localState';
 
 export const Login = (props) => {
   const dispatch = useDispatch()
@@ -30,35 +31,24 @@ export const Login = (props) => {
       const loginUser = async() => {
         try{
           const res = await axios.post(`${Localhost}/api/auth/login`, {email: email.value, password: password.value})
-          // add madiha
-          // const token = res.data.token;
-         
-          // Dispatch the setToken action to save the token in the state
-          // dispatch(setToken(token));
-
-    // Save the token in local storage
-    // localStorage.setItem('token', token);
-    // localStorage.setItem('id',id);
-    // continue the other code
-   
-    // const userId = res.data.user._id;
-    // const name = res.data.user.name;
-    // const role = res.data.user.role;
-    // localStorage.setItem('token', JSON.stringify(token));
-    // localStorage.setItem('userId', JSON.stringify(userId));
-    // localStorage.setItem('name', JSON.stringify(name));
-    // localStorage.setItem('role', JSON.stringify(role));
           console.log('user have been added successfully: ' + JSON.stringify(res.data.token), JSON.stringify(res.data.user._id))
           dispatch(signup({email: email.value,
             id:JSON.stringify(res.data.user._id),
              token:JSON.stringify(res.data.token),
               name:JSON.stringify(res.data.user.name),
                role:JSON.stringify(res.data.user.role)})) 
-          // dispatch(signup({ email: email.value, id: userId, token, name, role }));
 
-          navigate("/", {replace: true})
+          const userInfo = {
+            email: email.value, token: JSON.stringify(res.data.token), 
+            id: JSON.stringify(res.data.user._id),
+            name: JSON.stringify(res.data.user.name),
+            role: JSON.stringify(res.data.user.role)
+          }
+          console.log(userInfo)
+          saveState(userInfo)
+          dispatch(signup(userInfo)) 
         }catch(e){
-          console.log('unable to add data: '+e.message)
+          console.log('unable to login: '+e)
         }
       }
       loginUser()

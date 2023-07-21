@@ -4,8 +4,10 @@ import { BiSolidDownArrow } from "react-icons/bi";
 import { GiCancel } from "react-icons/gi";
 import { BiError } from "react-icons/bi";
 import { Link } from "react-router-dom";
-
+import { useSelector } from "react-redux";
 const Mentor = ({ options, choose, setChoose }) => {
+    const user = useSelector(state => state.user.value)
+    console.log(user.token, 'user name: ', user.name)
     const [file, setFile] = useState(null);
     const [errors, setErros] = useState({
         expertise: false,
