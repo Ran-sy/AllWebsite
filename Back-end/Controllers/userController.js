@@ -1,13 +1,14 @@
 const User = require('../Models/userModel')
-
-const register = async function (req, res) {
+const createError=require("../utils/createError")
+const bcrypt=require("bcryptjs")
+const jwt =require("jsonwebtoken")
+const register = async function (req, res,next) {
     try {
         if (!req.body.name || !req.body.email || !req.body.password) {
             throw new Error('name, email and password are required')
         }
         // Check if user already exists
         const existingUser = await User.findOne({ email: req.body.email });
-        console.log(existingUser)
         if (existingUser) throw new Error('User already exists');
 
         const newUser = new User({
@@ -15,9 +16,8 @@ const register = async function (req, res) {
             email: req.body.email,
             password: req.body.password
         })
-        const token = await newUser.generateToken()
         await newUser.save()
-        res.status(200).json({user: newUser, token})
+        res.status(200).json(newUser)
     } catch (e) {
         console.log(e)
         return res.status(400).json({e})
@@ -25,19 +25,36 @@ const register = async function (req, res) {
 }
 
 // Login
-const login = async function (req, res) {
-    try {
-        if (!req.body.email || !req.body.password) {
-            throw new Error("email and password are required");
-        }
-        const user = await User.findByCredentials(req.body.email, req.body.password);
-        const token = await user.generateToken()
-        res.status(200).json({user, token})
-    }
-    catch (e) {
-        res.status(400).json({e})
-    }
-}
+const login = async function (req, res,next) {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+
+    if (!user) return next(createError(404, "User not found!"));
+
+  
+    const isCorrect = bcrypt.compareSync(req.body.password, user.password);
+    if (!isCorrect)
+      return next(createError(400, "Wrong password or username!"));
+
+      const token = jwt.sign(
+      {
+        id: user._id
+      },
+      "secretKey"
+    );
+
+    const { password, ...info } = user._doc;
+    res
+      .cookie("accessToken", token, {
+        httpOnly: false,
+      })
+      .status(200)
+      .send(info);
+  } catch (err) {
+    next(err);
+  }
+};
+
 const getUser = async function (req, res) {
     try {
         const user = await User.findOne({ _id: req.params.id }).populate("messages");
@@ -48,17 +65,14 @@ const getUser = async function (req, res) {
 };
 
 const logout = async function (req, res) {
-    console.log(req.headers["authorization"].split(" ")[1])
-    try {
-        req.user.tokens = req.user.tokens.filter(el => {
-            return el !== req.headers["authorization"].split(" ")[1]
-        })
-        await req.user.save()
-        res.status(200).send('successfully logged out')
-    } catch (e) {
-        res.status(500).json({e})
-    }
-}
+    res
+    .clearCookie("accessToken", {
+      sameSite: "none",
+      secure: true,
+    })
+    .status(200)
+    .send("User has been logged out.")}
+
 
 const logoutAll = async function (req, res) {
     try {

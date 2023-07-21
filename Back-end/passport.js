@@ -30,7 +30,7 @@ passport.use(
         const existingUser = await User.findOne({ googleId: profile.id });
         if (existingUser) {
           console.log("user is there");
-          const token = await existingUser.generateToken();
+          
 
           done(null, existingUser);
         } else {
@@ -42,9 +42,7 @@ passport.use(
           };
           const user = await User.create(newUser);
           console.log("creating new user");
-          const token = await user.generateToken();
-
-          done(null, user);
+              done(null, user);
         }
       } catch (err) {
         console.error(err);
@@ -67,7 +65,7 @@ passport.use(
         const existingUser = await User.findOne({ gitId: profile.id });
         if (existingUser) {
           console.log("user is there");
-          const token = await existingUser.generateToken();
+          
 
           done(null, existingUser);
         } else {
@@ -78,7 +76,7 @@ passport.use(
             email: profile.profileUrl,
           };
           const user = await User.create(newUser);
-          const token = await existingUser.generateToken();
+          
 
           console.log("creating new user");
           done(null, user);
@@ -105,7 +103,7 @@ passport.use(
         const existingUser = await User.findOne({ facebookId: profile.id });
         if (existingUser) {
           console.log("user is there");
-          const token = await existingUser.generateToken();
+          
 
           done(null, existingUser);
         } else {
@@ -116,7 +114,7 @@ passport.use(
           };
           const user = await User.create(newUser);
           console.log("creating new user");
-          const token = await existingUser.generateToken();
+          
 
           done(null, user);
         }

@@ -1,25 +1,36 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { loadState } from './localState';
+import { createSlice } from "@reduxjs/toolkit";
 
-const localState = loadState();
+const initialState = {
+  currentUser: null,
+  loading: false,
+  error: false,
+};
 
-const initialStateValue = localState || {
-    name: "", email: "", role: "", token: "", id: "",
-    googleId: "", gitId: "", facebookId: "", cvPath: "",
-}
 export const userSlice = createSlice({
-    name: "user",
-    initialState: { value: initialStateValue },
-    reducers: {
-        signup: (state, action) => {
-            state.value = { ...state.value, ...action.payload }
-        },
-        logout: (state, action) => {
-            state.value = initialStateValue
-        }
-    }
-})
+  name: "user",
+  initialState,
+  reducers: {
+    loginStart: (state) => {
+      state.loading = true;
+    },
+    loginSuccess: (state, action) => {
+      state.loading = false;
+      state.currentUser = action.payload;
+    },
+    loginFailure: (state) => {
+      state.loading = false;
+      state.error = true;
+    },
+    logout: (state) => {
+      state.currentUser = null;
+      state.loading = false;
+      state.error = false;
+    },
+    
+  },
+});
 
-export const { signup, logout } = userSlice.actions;
+export const { loginStart, loginSuccess, loginFailure, logout} =
+  userSlice.actions;
 
-export default userSlice.reducer
+export default userSlice.reducer;

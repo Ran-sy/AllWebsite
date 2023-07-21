@@ -1,53 +1,60 @@
 import {
-  signInWithPopup, GoogleAuthProvider, FacebookAuthProvider,
+  signInWithPopup,
+  GoogleAuthProvider,
+  FacebookAuthProvider,
 } from "firebase/auth";
-import './style.css'
-import { React, useState} from "react";
+import "./style.css";
+import { React, useState } from "react";
 import {
-  FaFacebookF, FaLinkedinIn, FaGoogle, FaExclamationTriangle,
+  FaFacebookF,
+  FaLinkedinIn,
+  FaGoogle,
+  FaExclamationTriangle,
 } from "react-icons/fa";
 import { auth } from "../../components/firebase/firebase";
 // new
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import axios from "axios";
-import { signup } from "../../features/user";
-import { Localhost }from "../../config/api";
-import { saveState } from '../../features/localState';
+// import { signup } from "../../features/user";
+import { Localhost } from "../../config/api";
+import { saveState } from "../../features/store";
+import { loginFailure, loginStart, loginSuccess } from "../../features/user";
 
 export const Login = (props) => {
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
   const [show, setShow] = useState("Show");
   const [passType, setPassType] = useState("password");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    dispatch(loginStart());
     let email = document.getElementById("email");
     let password = document.getElementById("password");
-    e.preventDefault();
-    if(email.value !=="" && password.value !==""){
-      const loginUser = async() => {
-        try{
-          const res = await axios.post(`${Localhost}/api/auth/login`, {email: email.value, password: password.value})
-          const userInfo = {
-            email: email.value, token: JSON.stringify(res.data.token), 
-            id: JSON.stringify(res.data.user._id),
-            name: JSON.stringify(res.data.user.name),
-            role: JSON.stringify(res.data.user.role)
-          }
-          console.log(userInfo)
-          saveState(userInfo)
-          dispatch(signup(userInfo)) 
-          navigate("/", {replace: true})
-        }catch(e){
-          console.log('unable to login: '+e)
+    console.log(email.value , password.value)
+    if (email.value !== "" && password.value !== "") {
+        try {
+          const res = await axios.post(
+            `${Localhost}/api/auth/login`,
+            {
+              email: email.value,
+              password: password.value,
+            },
+            { withCredentials: true }
+          );
+          console.log(email.value);
+          dispatch(loginSuccess(res.data));
+          navigate("/oppShow");
+        } catch (err) {
+          dispatch(loginFailure());
         }
-      }
-      loginUser()
+      };
+    
     }
-  };
+  ;
 
   const togglePassword = () => {
     if (pass !== "" && show === "Show") {
@@ -78,7 +85,7 @@ export const Login = (props) => {
       email.style.borderBottom = "thin solid #fed049";
       password.style.borderBottom = "thin solid #fed049";
     }
-  }
+  };
   const changeEmailInput = (e) => {
     setEmail(e.target.value);
     let email = document.getElementById("email");
@@ -115,18 +122,18 @@ export const Login = (props) => {
     console.log("Logged in successfully");
   };
   // end sign in with facebook
- const google = () => {
-   window.open(`http://localhost:5000/auth/google/callback`, "_self");
- };
+  const google = () => {
+    window.open(`http://localhost:5000/auth/google/callback`, "_self");
+  };
 
- const github = () => {
-   window.open(`http://localhost:5000/auth/github/callback`, "_self");
- };
+  const github = () => {
+    window.open(`http://localhost:5000/auth/github/callback`, "_self");
+  };
 
- const facebook = () => {
-   window.open(`http://localhost:5000/auth/facebook/callback`, "_self");
- };
- 
+  const facebook = () => {
+    window.open(`http://localhost:5000/auth/facebook/callback`, "_self");
+  };
+
   return (
     <div className="parent">
       <div className="auth-form-container">

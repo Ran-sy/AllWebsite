@@ -16,23 +16,16 @@ router.get(
   passport.authenticate(
     "google",
 
-    { failureRedirect: "/login", successRedirect: CLIENT_URL }
-  )
-);
-router.get(
-  "/github",
-  passport.authenticate("github", {
-    scope: ["profile", "email"],
-  })
-);
-
-router.get(
-  "/google/callback",
-  passport.authenticate(
-    "google",
-
-    { failureRedirect: "/login", successRedirect: CLIENT_URL }
-  )
+    { failureRedirect: "/login", successRedirect: CLIENT_URL },
+  ),
+  (req, res) => {
+    res
+      .cookie("accessToken", token, {
+        httpOnly: true,
+      })
+      .status(200)
+      .send(info);
+  }
 );
 router.get("/github", passport.authenticate("github", { scope: ["profile"] }));
 
@@ -41,7 +34,15 @@ router.get(
   passport.authenticate("github", {
     successRedirect: CLIENT_URL,
     failureRedirect: "/login/failed",
-  })
+  }),
+  (req, res) => {
+    res
+      .cookie("accessToken", token, {
+        httpOnly: true,
+      })
+      .status(200)
+      .send(info);
+  }
 );
 
 router.get(
@@ -54,7 +55,15 @@ router.get(
   passport.authenticate("facebook", {
     successRedirect: CLIENT_URL,
     failureRedirect: "/login/failed",
-  })
+  }),
+  (req, res) => {
+    res
+      .cookie("accessToken", token, {
+        httpOnly: true,
+      })
+      .status(200)
+      .send(info);
+  }
 );
 
 module.exports = router;
