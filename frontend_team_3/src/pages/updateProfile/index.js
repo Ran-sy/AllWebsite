@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
+import { useSelector,useDispatch } from 'react-redux';
 import "./style.css";
 import SidaNav2 from "../../pages/showReq/sideBar/index";
 import hero from "../../assets/images/colored_background.jpg";
@@ -8,13 +9,92 @@ import Clud from "@iconscout/react-unicons/icons/uil-cloud-upload";
 import Cam from "@iconscout/react-unicons/icons/uil-camera";
 import Calendr from "@iconscout/react-unicons/icons/uil-calender";
 import Mail from "@iconscout/react-unicons/icons/uil-fast-mail";
-import { Upload } from "antd";
+import { Localhost } from '../../config/api';
+import axios from 'axios';
+
+import { Upload, Button } from 'antd';
+import { InboxOutlined } from '@ant-design/icons';
+import { setToken } from "../../features/user";
+
+
+const { Dragger } = Upload;
 
 // ====================================================
 
 // ================================================
 
 const UpdateProfile = () => {
+    // token get
+    // const dispatch = useDispatch();
+
+    // useEffect(() => {
+    //   // Check if the token exists in local storage
+    //   const token = localStorage.getItem('token');
+    //   const id= localStorage.getItem('id')
+    //   if (token) {
+    //     // Dispatch the setToken action to set the token in the state
+    //     dispatch(setToken(token));
+    //   }
+    // }, [dispatch]);
+
+    ///////////////////////////////////Upload function
+
+
+    const [file, setFile] = useState(null);
+
+    const user = useSelector(state=> state.user.value)
+    
+      
+      const token = user.token
+      const userId = user.id
+    // const token = localStorage.getItem('token');
+    // const userId= localStorage.getItem('userId')
+      console.log(token, userId, user)
+      const userIdWithoutQuotes = userId.replace(/"/g, '');
+      const tokenplace = token.replace(/"/g, '')
+    //   console.log(tokenplace, userIdWithoutQuotes, user, token, userId)
+  
+      const handleFileChange = (info) => {
+      const fileList = [...info.fileList];
+      if (fileList.length > 0) {
+        setFile(fileList[0].originFileObj);
+      }
+    };
+  
+    const handleUpload = async () => {
+      if (!file || !tokenplace || !userIdWithoutQuotes) {
+        return;
+      }
+  
+      const formData = new FormData();
+      formData.append('cv', file)
+  
+      try {
+        const response = await axios.post(
+          `${Localhost}/api/v1/cv/upload/${userId}`,
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              Authorization: `Bearer ${tokenplace}`
+            },
+          }
+        );
+  
+        if (response.status === 200) {
+          console.log('CV uploaded successfully');
+          console.log(response.data);
+        } else {
+          console.log('CV upload failed');
+        }
+      } catch (error) {
+        console.log('Error uploading CV:', error);
+        
+        }
+    };
+
+
+    /////////////////////////////////////////////////////
     // logic start -----------
 
     const [rows, setRows] = useState([
@@ -320,22 +400,23 @@ const UpdateProfile = () => {
                                             </div>
                                             <div className="upload-box d-flex p-1 m-2 flex-colum justify-content-center align-items-center ">
                                                 {/* <Upload.Dragger className='upld-ic' >      */}
-                                                <Upload
-                                                    multiple
-                                                    accept=".jpeg, .png , .gif , .mp4 , .ai , .psd , .word , .ppt "
-                                                    className="upld-ic"
-                                                >
-                                                    <h6>
-                                                        {" "}
-                                                        Drag & Drop files or{" "}
-                                                        <span className="spanylo"> Browes </span>{" "}
-                                                    </h6>
-                                                    {/* </Upload.Dragger>  */}
-                                                </Upload>
+                                                <Dragger
+        accept=".jpeg, .png , .gif , .mp4 , .ai , .psd , .word , .ppt ,.pdf"
+        className="upld-ic"
+        fileList={[]}
+        onChange={handleFileChange}
+        beforeUpload={() => false}
+      >
+        <p className="ant-upload-drag-icon">
+          <InboxOutlined />
+        </p>
+        <p className="ant-upload-text">Click or drag file to this area to upload</p>
+        <p className="ant-upload-hint">Support for a single or bulk upload.</p>
+      </Dragger>
                                             </div>
                                             {/** end upload-box */}
                                             <p>
-                                                supported formates : JPEG , PNG , GIF , MP4 , AI , PSD ,
+                                                supported formates : JPEG , PNG , GIF , MP4 , AI , PSD ,PDF
                                                 Word , PPT{" "}
                                             </p>
                                         </div>
@@ -343,9 +424,8 @@ const UpdateProfile = () => {
                                     {/** end form-per-med-left-5-btmBox */}
                                 </div>{" "}
                                 {/** end form-per-med-left-5 */}
-                                <button className="p-2 text-white d-flex justify-content-center align-items-end border-0 ">
-                                    SAVE
-                                </button>
+                                <Button className='p-2 text-white d-flex justify-content-center align-items-end border-0 ' onClick={handleUpload} >SAVE</Button>
+                               
                             </div>{" "}
                             {/** end form-per-med-box */}
                         </form>

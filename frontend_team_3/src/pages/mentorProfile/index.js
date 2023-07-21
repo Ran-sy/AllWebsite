@@ -3,12 +3,26 @@ import { useState } from "react";
 import { BiSolidDownArrow } from "react-icons/bi";
 import { GiCancel } from "react-icons/gi";
 import { BiError } from "react-icons/bi";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import axios from "axios";
+import { signup } from "../../features/user";
+import { Localhost }from "../../config/api";
+import { saveState } from '../../features/localState';
+
 const Mentor = ({ options, choose, setChoose }) => {
     const user = useSelector(state => state.user.value)
-    console.log(user.token, 'user name: ', user.name)
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
     const [file, setFile] = useState(null);
+    const [profile, setProfile] = useState({
+        lookingFor: choose,
+        designation: 'Computer Science',
+        expertise: [{name: ''}],
+        company: '',
+        yearsOfExperence: 0,
+        location: ''
+    })
     const [errors, setErros] = useState({
         expertise: false,
         company: false,
@@ -18,6 +32,26 @@ const Mentor = ({ options, choose, setChoose }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        const addNewMentor = async () =>{
+            try{
+                console.log('add new mentor')
+
+                const config ={headers: {'Authorization': `Bearer ${user.token}`}}
+                await axios.post(`${Localhost}/api/v1/mentorProfile`, profile, config)
+                if(file){
+                    await axios.post(`${Localhost}/api/v1/cv/upload`, file, config)
+            }
+                const userInfo = { ...user, role: choose === 'mentee'? 'mentor': 'mentee' }
+
+                dispatch(signup(userInfo)) 
+                saveState(userInfo)
+                navigate("/", {replace: true})
+            }catch(e){
+                console.log('unable create prfile: ' + e)
+            }
+        }
+        if(profile.location && profile.company) addNewMentor()
+        else console.log('all info are required', profile.company, profile.location)
     };
 
     const handleFocusInput = (e) => {
@@ -31,14 +65,6 @@ const Mentor = ({ options, choose, setChoose }) => {
             ...prev,
             [name]: e.target.value.trim().length === 0,
         }));
-    };
-
-    const handleChange = (e) => {
-        setChoose(e.target.value);
-    };
-
-    const selectFile = (e) => {
-        setFile(e.target.files[0]);
     };
 
     return (
@@ -60,7 +86,9 @@ const Mentor = ({ options, choose, setChoose }) => {
                                     className="data"
                                     placeholder="select type"
                                     value={choose}
-                                    onChange={handleChange}
+                                    onChange={
+                                        e=>setChoose(e.target.value)
+                                    }
                                     style={{ background: "transparent" }}
                                 >
                                     {options?.map((option) => (
@@ -79,12 +107,15 @@ const Mentor = ({ options, choose, setChoose }) => {
                                 <select
                                     className="data"
                                     placeholder="select type"
+                                    onChange = {
+                                        e=> setProfile({...profile, designation: e.target.value})
+                                    }
                                     style={{ background: "transparent" }}
                                 >
-                                    <option className="choose1">Computer Science</option>
-                                    <option className="choose1">Engineering</option>
-                                    <option className="choose2">Artificial Intelligence</option>
-                                    <option className="choose2">Computer programming</option>
+                                    <option value='Computer Science' className="choose1">Computer Science</option>
+                                    <option value='Engineering' className="choose1">Engineering</option>
+                                    <option value='Artificial Intelligence' className="choose2">Artificial Intelligence</option>
+                                    <option value='Computer Programming' className="choose2">Computer Programming</option>
                                 </select>
                             </div>
                             <div className="p-3 draft">
@@ -94,6 +125,9 @@ const Mentor = ({ options, choose, setChoose }) => {
                                     type="text"
                                     onFocus={handleFocusInput}
                                     onBlur={handleBlurInput}
+                                    onChange={
+                                        e=> setProfile({...profile, expertise: [{name: e.target.value}]})
+                                    }
                                     placeholder={errors.expertise ? "Input text" : "Expertise"}
                                 />
                                 {errors.expertise && (
@@ -111,6 +145,9 @@ const Mentor = ({ options, choose, setChoose }) => {
                                     type="text"
                                     onFocus={handleFocusInput}
                                     onBlur={handleBlurInput}
+                                    onChange={
+                                        e=> setProfile({...profile, company: e.target.value})
+                                    }
                                     placeholder={
                                         errors.company ? "Input text" : "Current Company"
                                     }
@@ -128,8 +165,11 @@ const Mentor = ({ options, choose, setChoose }) => {
                                     type="text"
                                     onFocus={handleFocusInput}
                                     onBlur={handleBlurInput}
+                                    onChange={
+                                        e=> setProfile({...profile, yearsOfExperence: parseInt(e.target.value) })
+                                    }
                                     placeholder={
-                                        errors.experience ? "Input text" : "Years of experience"
+                                        errors.experience ? "Input number" : "Years of experience"
                                     }
                                 />
                                 {errors.experience && (
@@ -145,6 +185,9 @@ const Mentor = ({ options, choose, setChoose }) => {
                                     type="text"
                                     onFocus={handleFocusInput}
                                     onBlur={handleBlurInput}
+                                    onChange={ 
+                                        e=> setProfile({...profile, location: e.target.value })
+                                    }
                                     placeholder={errors.location ? "Input text" : "Location"}
                                 />
                                 {errors.location && (
@@ -165,7 +208,9 @@ const Mentor = ({ options, choose, setChoose }) => {
                                     type="file"
                                     id="upload-file"
                                     accept=".pdf"
-                                    onChange={selectFile}
+                                    onChange={
+                                        e=>setFile(e.target.files[0])
+                                    }
                                 />
                                 <div className="d-flex justify-content-between">
                                     {file && (
@@ -189,11 +234,9 @@ const Mentor = ({ options, choose, setChoose }) => {
                         </div>
                         <div className="col-sm-6">
                             <div className="button1 end  btn-1 ">
-                                <Link to="/">
-                                    <button type="button" className="submit">
-                                        Submit
-                                    </button>
-                                </Link>
+                                <button type="button" className="submit" onClick={handleSubmit}>
+                                    Submit
+                                </button>
                             </div>
                         </div>
                     </div>

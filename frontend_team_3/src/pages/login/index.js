@@ -34,6 +34,7 @@ export const Login = (props) => {
     dispatch(loginStart());
     let email = document.getElementById("email");
     let password = document.getElementById("password");
+
     console.log(email.value , password.value)
     if (email.value !== "" && password.value !== "") {
         try {
@@ -52,9 +53,6 @@ export const Login = (props) => {
           dispatch(loginFailure());
         }
       };
-    
-    }
-  ;
 
   const togglePassword = () => {
     if (pass !== "" && show === "Show") {
