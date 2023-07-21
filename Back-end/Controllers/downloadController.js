@@ -4,11 +4,13 @@ const User = require('../Models/userModel')
 
 
 const uploadCV = async (req, res) => {
-  const menteeName = req.body.name;
+  
+  const userId = req.params.id;
+
   const cvPath = req.file.path;
 
   try {
-    const user = await User.findOne({ name: menteeName });
+    const user = await User.findById(userId );
 
     if (!user) {
       res.status(404).send("User not found");
