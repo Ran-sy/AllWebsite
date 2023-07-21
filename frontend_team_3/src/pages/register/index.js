@@ -40,14 +40,14 @@ const Resgister = () => {
                 try {
                     const res = await axios.post(`${Localhost}/api/auth/signup`, { ...payload, password: password.value })
                     const userInfo = { ...payload,
-                        token: JSON.stringify(res.data.token), 
+                        token: JSON.stringify(res.data.token).slice(1, -1), 
                         id: JSON.stringify(res.data.user._id),
-                        role: JSON.stringify(res.data.user.role)
+                        role: JSON.stringify(res.data.user.role).slice(1, -1)
                      }
                     console.log('user have been added successfully: ' + userInfo)
                     saveState(userInfo)
                     dispatch(signup())
-                    navigate("/wizard", { replace: true })
+                    navigate("/profiles", { replace: true })
                 } catch (e) {
                     console.log('unable to add data: ' + e)
                 }
