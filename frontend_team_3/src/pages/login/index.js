@@ -11,7 +11,7 @@ import { auth } from "../../components/firebase/firebase";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import axios from "axios";
-import { signup } from "../../features/user";
+import { signup, setToken } from "../../features/user";
 import { Localhost }from "../../config/api";
 import { saveState } from '../../features/localState';
 
@@ -31,6 +31,13 @@ export const Login = (props) => {
       const loginUser = async() => {
         try{
           const res = await axios.post(`${Localhost}/api/auth/login`, {email: email.value, password: password.value})
+          console.log('user have been added successfully: ' + JSON.stringify(res.data.token), JSON.stringify(res.data.user._id))
+          dispatch(signup({email: email.value,
+            id:JSON.stringify(res.data.user._id),
+             token:JSON.stringify(res.data.token),
+              name:JSON.stringify(res.data.user.name),
+               role:JSON.stringify(res.data.user.role)})) 
+
           const userInfo = {
             email: email.value, token: JSON.stringify(res.data.token).slice(1, -1), 
             id: JSON.stringify(res.data.user._id),
@@ -39,7 +46,6 @@ export const Login = (props) => {
           }
           saveState(userInfo)
           dispatch(signup(userInfo)) 
-          navigate("/", {replace: true})
         }catch(e){
           console.log('unable to login: '+e)
         }

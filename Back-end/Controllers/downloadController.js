@@ -2,18 +2,15 @@ const fs = require("fs");
 const path = require('path')
 const User = require('../Models/userModel')
 
-
-const uploadCV = async (req, res) => {
-  try {
-  const menteeName = req.body.name;
+const uploadCV = async (req, res) => {\
+  const userId = req.params.id;
   const cvPath = req.file.path;
-    const user = await User.findOne({ name: menteeName });
-
+  try {
+    const user = await User.findById(userId );
     if (!user) {
       res.status(404).send("User not found");
       return;
     }
-
     user.cvPath = cvPath; // Set the cvPath property on the user object
     await user.save();
 
