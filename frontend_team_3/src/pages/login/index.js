@@ -200,4 +200,4 @@ export const Login = (props) => {
     </div>
   );
 };
-// justify-content-sm-center
+}
