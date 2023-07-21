@@ -19,7 +19,7 @@ const newsletterSchema = new mongoose.Schema({
 newsletterSchema.methods.transport = function (email, title, text) {
   const transporter = nodemailer.createTransport({
     service: "gmail",
-    auth: {
+    auth: { 
       user: process.env.MAIL_EMAIL,
       pass: process.env.MAIL_PASSWORD,
     },
