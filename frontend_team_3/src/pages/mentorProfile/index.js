@@ -10,7 +10,7 @@ import { Localhost } from "../../config/api";
 import { loginFailure, loginStart, loginSuccess } from "../../features/user";
 
 const Mentor = ({ options, choose, setChoose }) => {
-    const user = useSelector(state => state.user.value)
+    const user = useSelector(state => state.currentUser)
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const [file, setFile] = useState(null);
@@ -31,26 +31,28 @@ const Mentor = ({ options, choose, setChoose }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // const addNewMentor = async () =>{
-        //     try{
-        //         console.log('add new mentor')
-
-        //         const config ={headers: {'Authorization': `Bearer ${user.token}`}}
-        //         await axios.post(`${Localhost}/api/v1/mentorProfile`, profile, config)
-        //         if(file){
-        //             await axios.post(`${Localhost}/api/v1/cv/upload`, file, config)
-        //     }
-        //         const userInfo = { ...user, role: choose === 'mentee'? 'mentor': 'mentee' }
-
-        //         dispatch(signup(userInfo)) 
-        //         saveState(userInfo)
-        //         navigate("/", {replace: true})
-        //     }catch(e){
-        //         console.log('unable create prfile: ' + e)
-        //     }
-        // }
-        // if(profile.location && profile.company) addNewMentor()
-        // else console.log('all info are required', profile.company, profile.location)
+        dispatch(loginStart());
+        const addNewMentor = async () =>{
+            if(!user.tokens[0]) {
+                console.log('please login first')
+                dispatch(loginFailure());
+            }
+            const config ={headers: {'Authorization': `Bearer ${user.tokens[0]}`}}
+            try{
+                await axios.post(`${Localhost}/api/v1/mentorProfile`, profile, config)
+                const userInfo = { ...user, role: 'mentee' }
+                dispatch(loginSuccess(userInfo));
+            if(file)
+                await axios.post(`${Localhost}/api/v1/cv/upload/${user.id}`, file, config)
+                navigate("/", {replace: true})
+            }catch(e){
+                dispatch(loginFailure());
+                console.log('unable create prfile: ' + e)
+            }
+            
+        }
+        if(profile.location && profile.company) addNewMentor()
+        else console.log('all info are required', profile.company, profile.location)
     };
 
     const handleFocusInput = (e) => {

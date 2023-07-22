@@ -10,7 +10,7 @@ import { Localhost } from "../../config/api";
 import { loginFailure, loginStart, loginSuccess } from "../../features/user";
 
 const Mentee = ({ options, choose, setChoose }) => {
-    const user = useSelector(state => state.user.value)
+    const user = useSelector(state => state.currentUser)
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const [file, setFile] = useState(null);
@@ -28,25 +28,29 @@ const Mentee = ({ options, choose, setChoose }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // const addNewMentee = async () =>{
-        //     try{
-        //         console.log('add new mentee')
-        //         const config ={headers: {'Authorization': `Bearer ${user.token}`}}
+        dispatch(loginStart());
+        const addNewMentee = async () =>{
+            if(!user.tokens[0]) {
+                console.log('please login first')
+                dispatch(loginFailure());
+            }
+            const config ={headers: {'Authorization': `Bearer ${user.tokens[0]}`}}
+            try{
 
-        //         await axios.post(`${Localhost}/api/v1/menteeProfile`, profile, config);
-        //         if(file){
-        //             await axios.post(`${Localhost}/api/v1/cv/upload`, file, config)}
-        //         const userInfo = { ...user, role: choose === 'mentee'? 'mentor': 'mentee' }
-                
-        //         dispatch(signup(userInfo)) 
-        //         saveState(userInfo)
-        //         navigate("/", {replace: true})
-        //     }catch(e){
-        //         console.log('unable create prfile: ' + e)
-        //     }
-        // }
-        // if(profile.location && profile.skills) addNewMentee()
-        // else console.log('all info are required', profile.location, profile.skills)
+                await axios.post(`${Localhost}/api/v1/menteeProfile`, profile, config);
+                const userInfo = { ...user, role: 'mentor'}
+                dispatch(loginSuccess(userInfo));
+            if(file){
+                await axios.post(`${Localhost}/api/v1/cv/upload/${user.id}`, file, config)}
+                navigate("/", {replace: true})
+            }catch(e){
+                dispatch(loginFailure());
+                console.log('unable create prfile: ' + e)
+            }
+        }
+        if(profile.location !== "" && profile.skills !== []) addNewMentee()
+        else console.log('all info are required', profile.location, profile.skills)
+        
     };
 
     const handleFocusInput = (e) => {
