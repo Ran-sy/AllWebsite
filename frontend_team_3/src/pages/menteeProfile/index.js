@@ -6,9 +6,8 @@ import { BiError } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
-import { signup } from "../../features/user";
-import { Localhost }from "../../config/api";
-import { saveState } from '../../features/localState';
+import { Localhost } from "../../config/api";
+import { loginFailure, loginStart, loginSuccess } from "../../features/user";
 
 const Mentee = ({ options, choose, setChoose }) => {
     const user = useSelector(state => state.user.value)
@@ -29,25 +28,25 @@ const Mentee = ({ options, choose, setChoose }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const addNewMentee = async () =>{
-            try{
-                console.log('add new mentee')
-                const config ={headers: {'Authorization': `Bearer ${user.token}`}}
+        // const addNewMentee = async () =>{
+        //     try{
+        //         console.log('add new mentee')
+        //         const config ={headers: {'Authorization': `Bearer ${user.token}`}}
 
-                await axios.post(`${Localhost}/api/v1/menteeProfile`, profile, config);
-                if(file){
-                    await axios.post(`${Localhost}/api/v1/cv/upload`, file, config)}
-                const userInfo = { ...user, role: choose === 'mentee'? 'mentor': 'mentee' }
+        //         await axios.post(`${Localhost}/api/v1/menteeProfile`, profile, config);
+        //         if(file){
+        //             await axios.post(`${Localhost}/api/v1/cv/upload`, file, config)}
+        //         const userInfo = { ...user, role: choose === 'mentee'? 'mentor': 'mentee' }
                 
-                dispatch(signup(userInfo)) 
-                saveState(userInfo)
-                navigate("/", {replace: true})
-            }catch(e){
-                console.log('unable create prfile: ' + e)
-            }
-        }
-        if(profile.location && profile.skills) addNewMentee()
-        else console.log('all info are required', profile.location, profile.skills)
+        //         dispatch(signup(userInfo)) 
+        //         saveState(userInfo)
+        //         navigate("/", {replace: true})
+        //     }catch(e){
+        //         console.log('unable create prfile: ' + e)
+        //     }
+        // }
+        // if(profile.location && profile.skills) addNewMentee()
+        // else console.log('all info are required', profile.location, profile.skills)
     };
 
     const handleFocusInput = (e) => {
