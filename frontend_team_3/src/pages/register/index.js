@@ -1,9 +1,3 @@
-import {
-  signInWithPopup,
-  GoogleAuthProvider,
-  FacebookAuthProvider,
-} from "firebase/auth";
-
 import "./style.css";
 import { React, useState } from "react";
 import {
@@ -12,13 +6,11 @@ import {
   FaGoogle,
   FaExclamationTriangle,
 } from "react-icons/fa";
-import { auth } from "../../components/firebase/firebase";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import axios from "axios";
-import { loginFailure, loginStart, loginSuccess, signup } from "../../features/user";
+import { loginFailure, loginStart, loginSuccess } from "../../features/user";
 import { Localhost } from "../../config/api";
-import { saveState } from "../../features/store";
 
 const Resgister = () => {
   
@@ -154,26 +146,21 @@ const Resgister = () => {
       document.getElementById("error6").style.display = "none";
     }
   };
-  // end check empty inputs
 
-  // start sign in with google
-  const handleGoogleLogin = async () => {
-    const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
-    console.log(user);
-    console.log("Logged in successfully");
-  };
-  // end sign in with google
-  // start sign in with facebook
-  const handleFacebookLogin = async () => {
-    const provider = new FacebookAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
-    console.log(user);
-    console.log("Logged in successfully");
-  };
-  // end sign in with facebook
+  // const handleGoogleLogin = async () => {
+  //   const provider = new GoogleAuthProvider();
+  //   const result = await signInWithPopup(auth, provider);
+  //   const user = result.user;
+  //   console.log(user);
+  //   console.log("Logged in successfully");
+  // };
+  // const handleFacebookLogin = async () => {
+  //   const provider = new FacebookAuthProvider();
+  //   const result = await signInWithPopup(auth, provider);
+  //   const user = result.user;
+  //   console.log(user);
+  //   console.log("Logged in successfully");
+  // };
   const google = () => {
     window.open(`http://localhost:5000/auth/google/callback`, "_self");
   };

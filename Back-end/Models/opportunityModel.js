@@ -49,8 +49,18 @@ const opportunitySchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
     },
+    applicantIds: [{
+        type: mongoose.Schema.Types.ObjectId,
+    }]
 }, { timestamp: true }
 );
+
+opportunitySchema.virtual('applicants', {
+    ref: 'User',
+    localField: 'applicantIds',
+    foreignField: '_id',
+    justOne: true
+  });
 
 opportunitySchema.methods.isBusy = function () {
 }
