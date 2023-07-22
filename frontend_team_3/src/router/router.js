@@ -6,7 +6,7 @@ import Profile from "../components/userprofile/Profile"
 import {
     Login, Resgister, ContactUs, MentoringOpportunityForm,
     ResetPassword, Selectlist, ShowReqest, ShowOpp, SearchMentor,
-    Opportunities, Requests, MentorReqForm, UpdateProfile, SearchMentee, NotFound, Home,
+    Opportunities, Requests, MentorReqForm, UpdateProfile, SearchMentee, NotFound, Home, ForgetPassword,
 } from "../pages"
 
 
@@ -16,9 +16,10 @@ const Routerl = () => {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Resgister />} />
-            <Route path='/resetpassword' element={<ResetPassword />} />
+            <Route path="/resetPassword/:id/:token" element={<ResetPassword />} />
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/Profiles" element={<Wizard />} />
+            <Route path="/forgetpassword" element={<ForgetPassword />} />
 
             <Route path='' element={<Selectlist />}>
                 <Route path='/mentor' element={<SearchMentor />} />

@@ -1,6 +1,5 @@
 const express = require("express");
 const passport = require("passport");
-const jwt = require("jsonwebtoken");
 
 const router = express.Router();
 const CLIENT_URL = "http://localhost:3000";
@@ -47,7 +46,7 @@ router.get(
 
 router.get(
   "/facebook",
-  passport.authenticate("facebook", { scope: ["profile","email"] })
+  passport.authenticate("facebook", { scope: ["profile", "email"] })
 );
 
 router.get(

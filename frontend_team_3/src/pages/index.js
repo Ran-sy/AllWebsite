@@ -12,13 +12,14 @@ import ShowReqest from './showReq'
 import MentorReqForm from './mentoringRequest'
 import MentoringOpportunityForm from './mentoringOpp'
 import UpdateProfile from './updateProfile'
+import ForgetPassword from './ForgetPassword'
 import SearchMentee from './search/mentee'
 import SearchMentor from './search/mentor'
 import Selectlist from './search/selectItems'
 import NotFound from './NotFound'
 
 export {
-    ContactUs, Resgister, Login, ResetPassword, NotFound, Home,
+    ContactUs, Resgister, Login, ResetPassword, NotFound, Home, ForgetPassword,
     Mentee, Mentor, UpdateProfile, MentorReqForm, MentoringOpportunityForm,
     Opportunities, Requests, ShowOpp, ShowReqest, SearchMentee, SearchMentor, Selectlist
 }
