@@ -40,7 +40,7 @@ export const Login = (props) => {
           );
           console.log(email.value);
           dispatch(loginSuccess(res.data));
-          navigate("/oppShow");
+          navigate("/");
         } catch (err) {
           dispatch(loginFailure());
         }
