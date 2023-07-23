@@ -1,4 +1,3 @@
-require('dotenv').config()
 const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
 const User = require('../Models/userModel');
@@ -16,7 +15,7 @@ const forgetPassword = async function (req, res) {
     // Generate secret
     const secret = process.env.SECRET_KEY + user.password
     const token = jwt.sign({ email: user.email, id: user.id }, secret, { expiresIn: '30m' })
-    const link = `http://localhost:3000/${process.env.PORT || 5000}/resetpassword/${user.id}/${token}`
+    const link = `http://localhost:3000/resetpassword/${user.id}/${token}`;
     user.sendEmail(user.email, 'Reset Password / Mentor Project', `<h1>Password reset request</h1><h3>You requested a password reset for your account.</h3><b>Click <a href="${link}">here</a> to reset your password.</b><br><br><p>please ignore if you didn't sent us this request</p>`)
     res.status(200).send("The password reset link has been sent to your email")
   } catch (e) {
