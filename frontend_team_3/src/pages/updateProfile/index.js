@@ -42,17 +42,13 @@ const UpdateProfile = () => {
 
     const [file, setFile] = useState(null);
 
-    const user = useSelector(state=> state.user.value)
+    const user = useSelector(state=> state.currentUser)
     
       
-      const token = user.token
-      const userId = user.id
-    // const token = localStorage.getItem('token');
-    // const userId= localStorage.getItem('userId')
-      console.log(token, userId, user)
-      const userIdWithoutQuotes = userId.replace(/"/g, '');
-      const tokenplace = token.replace(/"/g, '')
-    //   console.log(tokenplace, userIdWithoutQuotes, user, token, userId)
+      const token = user.tokens[0]
+      const userId = user._id
+    
+    
   
       const handleFileChange = (info) => {
       const fileList = [...info.fileList];
@@ -62,7 +58,7 @@ const UpdateProfile = () => {
     };
   
     const handleUpload = async () => {
-      if (!file || !tokenplace || !userIdWithoutQuotes) {
+      if (!file || !token|| !userId) {
         return;
       }
   
@@ -76,14 +72,14 @@ const UpdateProfile = () => {
           {
             headers: {
               'Content-Type': 'multipart/form-data',
-              Authorization: `Bearer ${tokenplace}`
+              Authorization: `Bearer ${token}`
             },
           }
         );
   
         if (response.status === 200) {
           console.log('CV uploaded successfully');
-          console.log(response.data);
+          alert(response.data)
         } else {
           console.log('CV upload failed');
         }
