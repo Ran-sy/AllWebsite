@@ -5,7 +5,14 @@ const nodemailer = require('nodemailer')
 //transport  function
 exports.mail = async (req, res, next) => {
 
-    const newContact = new Contact(req.body);
+    const { fname, lastname, email, phone, message } = req.body.formData;
+    const newContact = new Contact({
+       fname,
+       lastname,
+       email,
+       phone,
+       message
+});
     try {
         let transporter = nodemailer.createTransport({
             service: 'Gmail',
@@ -55,7 +62,7 @@ exports.mail = async (req, res, next) => {
 
         res.status(201).json({
             success: true,
-            newContact,
+            newContact: req.body.formData,
 
         })
 
