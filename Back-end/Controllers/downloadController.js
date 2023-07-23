@@ -3,8 +3,10 @@ const path = require('path')
 const User = require('../Models/userModel')
 
 const uploadCV = async (req, res) => {
-  const userId = req.user._id;
-  const cvPath = req?.body?.file?.path;
+  const userId = req.params.id;
+
+  const cvPath = req.file.path;
+
   try {
     const user = await User.findById(userId);
     if (!user) {
