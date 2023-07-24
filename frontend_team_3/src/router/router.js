@@ -10,7 +10,6 @@ import {
     Opportunities, Requests, MentorReqForm, UpdateProfile, SearchMentee, NotFound, Home, ForgetPassword,
 } from "../pages"
 
-
 const Routerl = () => {
     return (
         <Routes>
