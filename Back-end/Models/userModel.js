@@ -25,7 +25,6 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    
     trim: true,
     minlength: 8,
     validate(val) {
@@ -41,16 +40,18 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-  
     unique: true,
     lowercase: true,
     validate(val) {
       if (!validator.isEmail(val)) throw new Error("email is invalid");
     },
   },
-  tokens:[{
-    type: String
-  }],
+  tokens: [
+    {
+      type: String
+    }
+  ],
+
   role: {
     type: String,
     enum: ['mentee', 'mentor'],

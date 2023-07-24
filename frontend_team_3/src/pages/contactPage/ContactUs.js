@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import './contactPage.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
@@ -7,47 +7,47 @@ import { Localhost } from '../../config/api';
 const ContactUs = () => {
 
 
-    const [formData, setFormData] = useState({
-      fname: '',
-      lastname: '',
-      phone:'',
-      email: '',
-      message: ''
-    });
-  
-    const handleChange = (event) => {
-      
-      setFormData({...formData, [event.target.name]: event.target.value})
-    };
-    ///////////////////////////////////////////////:
-    const handleSubmit = async (event) => {
-      event.preventDefault();
-  
-      // Fetch data from the backend using Axios
-      try {
-        
-        const response = await axios.post(`${Localhost}/api/email/send-email`, {formData},
-         {
-          headers: {'Content-Type':'application/json'}
+  const [formData, setFormData] = useState({
+    fname: '',
+    lastname: '',
+    phone: '',
+    email: '',
+    message: ''
+  });
+
+  const handleChange = (event) => {
+    setFormData({ ...formData, [event.target.name]: event.target.value })
+  };
+  ///////////////////////////////////////////////:
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    // Fetch data from the backend using Axios
+    try {
+
+      const response = await axios.post(`${Localhost}/api/email/send-email`, { formData },
+        {
+          headers: { 'Content-Type': 'application/json' }
         })
-       
-        // Process the response if needed
-        console.log(response.data);
-        // clear inputs 
-        setFormData({
-          fname: '',
-          lastname: '',
-          phone: '',
-          email: '',
-          message: '',
-        });
-        console.log(formData)
-      } catch (error) {
+
+      // Process the response if needed
+      console.log(response.data);
+      // clear inputs 
+      setFormData({
+        fname: '',
+        lastname: '',
+        phone: '',
+        email: '',
+        message: '',
+
+      });
+      console.log(formData)
+    } catch (error) {
       //   // Handle any errors
-        console.error(error);
-      }
-  
-    };
+      console.error(error);
+    }
+
+  };
 
   return (
     <section className="contact-us">
@@ -61,7 +61,7 @@ const ContactUs = () => {
     <!-- contact form  --> */}
         <div className="col-md-1"></div>
         <div className="p-5  col-md-6 col-11 ml-md-5 m-auto  " style={{ backgroundColor: '#FAFAFA' }}>
-          <form className="p-3"  method='post'onSubmit={handleSubmit}>
+          <form className="p-3" method='post' onSubmit={handleSubmit}>
             <div className="form-row d-lg-flex gap-2">
               <div className="form-group col-md-6">
                 <label htmlFor="inputEmail4">First Name</label>
@@ -82,7 +82,7 @@ const ContactUs = () => {
             </div>
             <div className="form-group" style={{ position: 'relative' }}>
               <label htmlFor="exampleFormControlTextarea1">Message</label>
-              <textarea className="form-control message" id="exampleFormControlTextarea1"  name='message' value={formData.message} onChange={handleChange} rows="4"></textarea>
+              <textarea className="form-control message" id="exampleFormControlTextarea1" name='message' value={formData.message} onChange={handleChange} rows="4"></textarea>
               <div className="div-button">
                 <button className="button3"> Send <FontAwesomeIcon icon={faPaperPlane} /></button>
               </div>

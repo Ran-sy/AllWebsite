@@ -7,7 +7,7 @@ import {
   FaExclamationTriangle,
 } from "react-icons/fa";
 // new
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import { Localhost } from "../../config/api";
@@ -27,31 +27,28 @@ export const Login = (props) => {
     let email = document.getElementById("email");
     let password = document.getElementById("password");
 
-    console.log(email.value , password.value)
     if (email.value !== "" && password.value !== "") {
-        try {
-          const res = await axios.post(
-            `${Localhost}/api/auth/login`,
-            {
-              email: email.value,
-              password: password.value,
-            },
-            { withCredentials: true }
-          );
-          console.log(email.value);
-          dispatch(loginSuccess(res.data));
-          navigate("/");
-        } catch (err) {
-          dispatch(loginFailure());
-        }
+      try {
+        const res = await axios.post(
+          `${Localhost}/api/auth/login`,
+          {
+            email: email.value,
+            password: password.value,
+          },
+          { withCredentials: true }
+        );
+        dispatch(loginSuccess(res.data));
+        navigate("/");
+      } catch (err) {
+        dispatch(loginFailure());
       }
+    }
   }
 
   const togglePassword = () => {
     if (pass !== "" && show === "Show") {
       setShow("Hide");
       setPassType("text");
-      //   console.log(show);
     } else if (show === "Hide") {
       setShow("Show");
       setPassType("password");
@@ -92,7 +89,7 @@ export const Login = (props) => {
       document.getElementById("error2").style.display = "none";
     }
   };
-  
+
   // const handleGoogleLogin = async () => {
   //   const provider = new GoogleAuthProvider();
   //   const result = await signInWithPopup(auth, provider);
@@ -153,7 +150,7 @@ export const Login = (props) => {
             </span>
             <FaExclamationTriangle id="error2" className="error-triangle" />
           </div>
-          <button className="link-btn">Forgot your password ?</button>
+          <Link to={'/forgetpassword'} className="link-btn">Forgot your password ?</Link>
           <button
             className="btn rounded-pill m-auto my-3 log"
             type="submit"

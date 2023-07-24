@@ -16,7 +16,9 @@ const getAllOpportunities = async (req, res) => {
 const getOpportunityById = async (req, res) => {
     try {
         const _id = req.params.id;
-        const opportunity = await Opportunity.findById(_id);
+        const opportunity = await Opportunity
+            .findById(_id)
+            .populate({ path: "owner"});
         if (!opportunity) {
             return res.status(404).send({ msg: ` No opportunity for this id ${_id}` });
         }
@@ -37,7 +39,7 @@ const updateOpportunity = async (req, res) => {
         if (!opportunity) {
             return res.status(404).send({ msg: ` No opportunity for this id ${_id}` });
         }
-        if(opportunity.progress != "open") res.status(400).send(`Cannot edit, this opportunity is already ${opportunity.progress}`)
+        if (opportunity.progress != "open") res.status(400).send(`Cannot edit, this opportunity is already ${opportunity.progress}`)
 
         res.status(200).json({ data: opportunity });
     } catch (error) {
@@ -66,7 +68,7 @@ const deleteOpportunity = async (req, res) => {
         if (!opportunity) {
             return res.status(404).json({ msg: ` No opportunity for this id ${_id}` });
         }
-        if(opportunity.progress != "open") res.status(400).send(`Cannot delete, this opportunity is already ${opportunity.progress}`)
+        if (opportunity.progress != "open") res.status(400).send(`Cannot delete, this opportunity is already ${opportunity.progress}`)
 
         res.status(204).send('deleted');
     } catch (error) {

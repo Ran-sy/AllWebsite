@@ -43,7 +43,6 @@ const Mentee = ({ options, choose, setChoose }) => {
               };
               
             try{
-
                 await axios.post(`${Localhost}/api/v1/menteeProfile`, profile, config);
                 const userInfo = { ...user, role: 'mentor'}
                 dispatch(loginSuccess(userInfo));

@@ -15,7 +15,7 @@ const ResetPassword = () => {
         e.preventDefault();
         try {
             const response = await axios.post(`${Localhost}/api/v1/resetPassword/${id}/${token}`, { password: newPassword });
-            setMessage(response)
+            setMessage(response.data)
             navigate("/login");
         } catch (e) {
             setMessage(e.message)
