@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import './style.css'
 import Form from "react-bootstrap/Form";
-import { Accordion, Badge, Button, Stack } from "react-bootstrap";
+import { Accordion, Badge, Button, Stack, Toast } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -12,10 +12,21 @@ import RequestsFilter from "../../components/homepage/RequestsFilters";
 import Search from "./search/Search";
 import MentorInLocation from "../../components/homepage/MentorLocation";
 import { Link } from "react-router-dom";
+import { Localhost } from "../../config/api";
+import axios from "axios";
 
+const Home = () => {
+  const [input, setInput] = useState('')
+  const [message, setMessage] = useState('')
 
-
-function Home({ data }) {
+  const handleClick = async () => {
+    try {
+      const response = await axios.post(`${Localhost}/api/v1/subscribe`, { email: input });
+      setMessage(response.data);
+    } catch (error) {
+      setMessage('Failed to send email initaivion');
+    }
+  }
 
   return (
     <>
@@ -135,9 +146,12 @@ function Home({ data }) {
                     <div className="mail-invite">
                       <Form.Control
                         type="memaila"
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
                         placeholder="Email Address"
                       />
-                      <a href="">Invite</a>
+                      <button onClick={handleClick}>Invite</button>
+                      {message && <p>{message}</p>}
                     </div>
                   </div>
                 </Col>
