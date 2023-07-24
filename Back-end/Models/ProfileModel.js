@@ -29,9 +29,9 @@ const ProfileSchema = new mongoose.Schema(
       type: Number,
     },
     expertise: [{
-      name: {type: String, trim: true},
-      from: {type: Number, max: 2024, min: 1900},
-      to: {type: Number, max: 2024, min: 1900},
+      name: { type: String, trim: true },
+      from: { type: Number, max: 2024, min: 1900 },
+      to: { type: Number, max: 2024, min: 1900 },
     }],
     currentCompany: {
       type: String,
@@ -47,13 +47,13 @@ const ProfileSchema = new mongoose.Schema(
       unique: true,
       required: true,
     },
-   
+
     dealtWith: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     }],
     busyDays: [{
-      from: {type: Date}, to: {type: Date}
+      from: { type: Date }, to: { type: Date }
     }]
   },
   { timestamps: true }
