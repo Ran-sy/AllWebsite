@@ -10,6 +10,7 @@ import { Localhost } from "../../config/api";
 import { loginFailure, loginStart, loginSuccess } from "../../features/user";
 
 const Mentee = ({ options, choose, setChoose }) => {
+
     const user = useSelector(state => state.currentUser)
     const dispatch = useDispatch()
     const navigate = useNavigate()
@@ -29,28 +30,32 @@ const Mentee = ({ options, choose, setChoose }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         dispatch(loginStart());
-        const addNewMentee = async () =>{
-            if(!user.tokens[0]) {
+        const addNewMentee = async () => {
+            if (!user?.tokens?.[0]) {
                 console.log('please login first')
                 dispatch(loginFailure());
             }
-            const config ={headers: {'Authorization': `Bearer ${user.tokens[0]}`}}
-            try{
-
+            const config = { headers: { 'Authorization': `Bearer ${user.tokens[0]}` } }
+            try {
                 await axios.post(`${Localhost}/api/v1/menteeProfile`, profile, config);
-                const userInfo = { ...user, role: 'mentor'}
+                const userInfo = { ...user, role: 'mentor' }
                 dispatch(loginSuccess(userInfo));
-            if(file){
-                await axios.post(`${Localhost}/api/v1/cv/upload/${user.id}`, file, config)}
-                navigate("/", {replace: true})
-            }catch(e){
+                if (file) {
+                    await axios.post(`${Localhost}/api/v1/cv/upload/${user.id}`, file, config)
+                }
+                navigate("/", { replace: true })
+            } catch (e) {
                 dispatch(loginFailure());
                 console.log('unable create prfile: ' + e)
             }
         }
-        if(profile.location !== "" && profile.skills !== []) addNewMentee()
-        else console.log('all info are required', profile.location, profile.skills)
-        
+
+        if (profile.location !== "" && profile.skills !== []) {
+            addNewMentee()
+        } else {
+            console.log('all info are required', profile.location, profile.skills)
+        }
+
     };
 
     const handleFocusInput = (e) => {
@@ -87,7 +92,7 @@ const Mentee = ({ options, choose, setChoose }) => {
                                 placeholder="select type"
                                 value={choose}
                                 onChange={
-                                    e=>setChoose(e.target.value)
+                                    e => setChoose(e.target.value)
                                 }
                                 style={{ background: 'transparent' }}
                             >
@@ -104,12 +109,12 @@ const Mentee = ({ options, choose, setChoose }) => {
                                 <BiSolidDownArrow />
                             </div>
 
-                            <select className="data" 
-                            placeholder="select type" 
-                            style={{ background: 'transparent' }}
-                            onChange={ e=>setProfile({
-                                ...profile, designation: e.target.value
-                            }) } >
+                            <select className="data"
+                                placeholder="select type"
+                                style={{ background: 'transparent' }}
+                                onChange={e => setProfile({
+                                    ...profile, designation: e.target.value
+                                })} >
                                 <option className="choose2">Computer scince</option>
                                 <option className="choose1">Engineering</option>
                                 <option className="choose2">Artificial Intelligence</option>
@@ -124,7 +129,7 @@ const Mentee = ({ options, choose, setChoose }) => {
                                 type="file"
                                 id="upload-file"
                                 accept=".pdf"
-                                onChange={ e=>setFile(e.target.files[0]) }
+                                onChange={e => setFile(e.target.files[0])}
                             />
                             <div className="d-flex justify-content-between">
                                 {file && (
@@ -149,9 +154,9 @@ const Mentee = ({ options, choose, setChoose }) => {
                             <label className="hire">
                                 <h4 className="title-text">Available for hiring</h4>
                                 <input className="data check"
-                                 type="checkbox"
-                                 onChange={ e=> setProfile({ ...profile, availableForHiring: true})}
-                                  />
+                                    type="checkbox"
+                                    onChange={e => setProfile({ ...profile, availableForHiring: true })}
+                                />
                                 <span className="checkmark"></span>
                             </label>
                         </div>
@@ -164,7 +169,7 @@ const Mentee = ({ options, choose, setChoose }) => {
                                 onFocus={handleFocusInput}
                                 onBlur={handleBlurInput}
                                 onChange={
-                                    e=>setProfile({...profile, skills: [e.target.value]})
+                                    e => setProfile({ ...profile, skills: [e.target.value] })
                                 }
                                 placeholder={errors.skills ? "Input text" : "Skills"}
                             />
@@ -183,7 +188,7 @@ const Mentee = ({ options, choose, setChoose }) => {
                                 onFocus={handleFocusInput}
                                 onBlur={handleBlurInput}
                                 onChange={
-                                    e=> setProfile({...profile, location: e.target.value})
+                                    e => setProfile({ ...profile, location: e.target.value })
                                 }
                                 placeholder={errors.location ? "Input text" : "Location"}
                             />

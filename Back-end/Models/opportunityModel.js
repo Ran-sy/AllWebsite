@@ -1,15 +1,16 @@
 const mongoose = require('mongoose');
-const Profile = require("../Models/profileModel");
 
 // create schema
 const opportunitySchema = mongoose.Schema({
     title: {
-        type: String, trim: true,
+        type: String,
+        trim: true,
         required: [true, "Title is required"],
         minlength: [3, "too short title name"],
     },
     description: {
-        type: String, trim: true,
+        type: String,
+        trim: true,
         required: [true, 'Description is required'],
     },
     certificate: {
@@ -21,7 +22,8 @@ const opportunitySchema = mongoose.Schema({
         required: [true, 'Duration in days required']
     },
     location: {
-        type: String, trim: true,
+        type: String,
+        trim: true,
         lowercase: true,
         required: [true, 'Location required']
     },
@@ -42,7 +44,8 @@ const opportunitySchema = mongoose.Schema({
         required: true
     },
     progress: {
-        type: String, default: "open",
+        type: String,
+        default: "open",
         enum: ["open", "in progress", "close"],
     },
     acceptedBy: {
@@ -60,7 +63,7 @@ opportunitySchema.virtual('applicants', {
     localField: 'applicantIds',
     foreignField: '_id',
     justOne: true
-  });
+});
 
 opportunitySchema.methods.isBusy = function () {
 }

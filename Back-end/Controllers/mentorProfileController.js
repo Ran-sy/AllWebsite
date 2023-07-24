@@ -1,26 +1,26 @@
 const Profile = require("../Models/profileModel");
 const fs = require('fs');
 
-const PostMentor =  (req, res) => {
-    let avatar = req.file ? req.file.fieldname : ""
-    const avatarPath = req.file ? req.file.path : "";
-    let mentor = new Profile({
-      ...req.body,
-      lookingFor: req.body.lookingFor? req.body.lookingFor: "mentee",
-      avatar,
-      user: req.user._id,
-    });
-    mentor.updateRole(mentor);
+const PostMentor = (req, res) => {
+  let avatar = req.file ? req.file.fieldname : ""
+  const avatarPath = req.file ? req.file.path : "";
+  let mentor = new Profile({
+    ...req.body,
+    lookingFor: req.body.lookingFor ? req.body.lookingFor : "mentee",
+    avatar,
+    user: req.user._id,
+  });
+  mentor.updateRole(mentor);
 
-    mentor
-      .save()
-      .then((response) => {
-        res.status(200).send(response);
-      })
-      .catch((error) => {
-        if (avatar) deleteUploadedAvatar(avatarPath)
-        res.status(400).send(error.message);
-      });
+  mentor
+    .save()
+    .then((response) => {
+      res.status(200).send(response);
+    })
+    .catch((error) => {
+      if (avatar) deleteUploadedAvatar(avatarPath)
+      res.status(400).send(error.message);
+    });
 };
 
 ////////////////////////////////////////////////////////////////////////////////////

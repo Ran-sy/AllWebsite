@@ -17,9 +17,9 @@ const Mentor = ({ options, choose, setChoose }) => {
     const [profile, setProfile] = useState({
         lookingFor: choose,
         designation: 'Computer Science',
-        expertise: [{name: ''}],
+        expertise: [{ name: '' }],
         company: '',
-        yearsOfExperence: 0,
+        yearsOfExperence: '',
         location: ''
     })
     const [errors, setErros] = useState({
@@ -32,26 +32,26 @@ const Mentor = ({ options, choose, setChoose }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         dispatch(loginStart());
-        const addNewMentor = async () =>{
-            if(!user.tokens[0]) {
+        const addNewMentor = async () => {
+            if (!user.tokens[0]) {
                 console.log('please login first')
                 dispatch(loginFailure());
             }
-            const config ={headers: {'Authorization': `Bearer ${user.tokens[0]}`}}
-            try{
+            const config = { headers: { 'Authorization': `Bearer ${user.tokens[0]}` } }
+            try {
                 await axios.post(`${Localhost}/api/v1/mentorProfile`, profile, config)
                 const userInfo = { ...user, role: 'mentee' }
                 dispatch(loginSuccess(userInfo));
-            if(file)
-                await axios.post(`${Localhost}/api/v1/cv/upload/${user.id}`, file, config)
-                navigate("/", {replace: true})
-            }catch(e){
+                if (file)
+                    await axios.post(`${Localhost}/api/v1/cv/upload/${user.id}`, file, config)
+                navigate("/", { replace: true })
+            } catch (e) {
                 dispatch(loginFailure());
                 console.log('unable create prfile: ' + e)
             }
-            
+
         }
-        if(profile.location && profile.company) addNewMentor()
+        if (profile.location && profile.company) addNewMentor()
         else console.log('all info are required', profile.company, profile.location)
     };
 
@@ -88,7 +88,7 @@ const Mentor = ({ options, choose, setChoose }) => {
                                     placeholder="select type"
                                     value={choose}
                                     onChange={
-                                        e=>setChoose(e.target.value)
+                                        e => setChoose(e.target.value)
                                     }
                                     style={{ background: "transparent" }}
                                 >
@@ -108,8 +108,8 @@ const Mentor = ({ options, choose, setChoose }) => {
                                 <select
                                     className="data"
                                     placeholder="select type"
-                                    onChange = {
-                                        e=> setProfile({...profile, designation: e.target.value})
+                                    onChange={
+                                        e => setProfile({ ...profile, designation: e.target.value })
                                     }
                                     style={{ background: "transparent" }}
                                 >
@@ -127,7 +127,7 @@ const Mentor = ({ options, choose, setChoose }) => {
                                     onFocus={handleFocusInput}
                                     onBlur={handleBlurInput}
                                     onChange={
-                                        e=> setProfile({...profile, expertise: [{name: e.target.value}]})
+                                        e => setProfile({ ...profile, expertise: [{ name: e.target.value }] })
                                     }
                                     placeholder={errors.expertise ? "Input text" : "Expertise"}
                                 />
@@ -147,7 +147,7 @@ const Mentor = ({ options, choose, setChoose }) => {
                                     onFocus={handleFocusInput}
                                     onBlur={handleBlurInput}
                                     onChange={
-                                        e=> setProfile({...profile, company: e.target.value})
+                                        e => setProfile({ ...profile, company: e.target.value })
                                     }
                                     placeholder={
                                         errors.company ? "Input text" : "Current Company"
@@ -167,7 +167,7 @@ const Mentor = ({ options, choose, setChoose }) => {
                                     onFocus={handleFocusInput}
                                     onBlur={handleBlurInput}
                                     onChange={
-                                        e=> setProfile({...profile, yearsOfExperence: parseInt(e.target.value) })
+                                        e => setProfile({ ...profile, yearsOfExperence: parseInt(e.target.value) })
                                     }
                                     placeholder={
                                         errors.experience ? "Input number" : "Years of experience"
@@ -186,8 +186,8 @@ const Mentor = ({ options, choose, setChoose }) => {
                                     type="text"
                                     onFocus={handleFocusInput}
                                     onBlur={handleBlurInput}
-                                    onChange={ 
-                                        e=> setProfile({...profile, location: e.target.value })
+                                    onChange={
+                                        e => setProfile({ ...profile, location: e.target.value })
                                     }
                                     placeholder={errors.location ? "Input text" : "Location"}
                                 />
@@ -210,7 +210,7 @@ const Mentor = ({ options, choose, setChoose }) => {
                                     id="upload-file"
                                     accept=".pdf"
                                     onChange={
-                                        e=>setFile(e.target.files[0])
+                                        e => setFile(e.target.files[0])
                                     }
                                 />
                                 <div className="d-flex justify-content-between">
