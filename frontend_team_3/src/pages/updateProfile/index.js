@@ -14,7 +14,7 @@ import axios from 'axios';
 
 import { Upload, Button } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
-import { setToken } from "../../features/user";
+
 
 
 const { Dragger } = Upload;
@@ -24,22 +24,9 @@ const { Dragger } = Upload;
 // ================================================
 
 const UpdateProfile = () => {
-    // token get
-    // const dispatch = useDispatch();
+  
 
-    // useEffect(() => {
-    //   // Check if the token exists in local storage
-    //   const token = localStorage.getItem('token');
-    //   const id= localStorage.getItem('id')
-    //   if (token) {
-    //     // Dispatch the setToken action to set the token in the state
-    //     dispatch(setToken(token));
-    //   }
-    // }, [dispatch]);
-
-    ///////////////////////////////////Upload function
-
-
+////////////////////////Upload Part////////////////////////////////////
     const [file, setFile] = useState(null);
 
     const user = useSelector(state=> state.currentUser)
@@ -48,8 +35,6 @@ const UpdateProfile = () => {
       const token = user.tokens[0]
       const userId = user._id
     
-    
-  
       const handleFileChange = (info) => {
       const fileList = [...info.fileList];
       if (fileList.length > 0) {
@@ -88,6 +73,7 @@ const UpdateProfile = () => {
         
         }
     };
+    ////////////////////////END UPLOAD PART///////////////////////
 
 
     /////////////////////////////////////////////////////

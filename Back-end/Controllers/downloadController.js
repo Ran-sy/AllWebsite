@@ -8,12 +8,14 @@ const uploadCV = async (req, res) => {
   const cvPath = req.file.path;
 
   try {
+    
     const user = await User.findById(userId);
+    
     if (!user) {
       res.status(404).send("User not found");
       return;
     }
-    user.cvPath = cvPath; // Set the cvPath property on the user object
+    user.cvPath = cvPath; 
     await user.save();
 
     res.send("CV uploaded successfully");

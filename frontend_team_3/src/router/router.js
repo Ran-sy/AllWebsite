@@ -3,6 +3,7 @@ import Wizard from "../components/mneteeProfORmentorProf"
 import MentoringOpportunities from "../components/mentorOpp/MentoringOpportunities"
 import MentoringRequest from "../components/mentorOpp/MentoringRequest"
 import Profile from "../components/userprofile/Profile"
+
 import {
     Login, Resgister, ContactUs, MentoringOpportunityForm,
     ResetPassword, Selectlist, ShowReqest, ShowOpp, SearchMentor,
@@ -35,7 +36,7 @@ const Routerl = () => {
             <Route path="/mentorreqapp" element={<MentoringRequest />} />
             <Route path="/external" element={<Profile />} />
             <Route path='/edituser' element={<UpdateProfile />} />
-            <Route path='/*' element={<NotFound />} />
+            <Route path='*' element={<NotFound />} />
         </Routes>
     )
 }
