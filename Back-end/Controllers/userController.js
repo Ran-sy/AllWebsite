@@ -43,6 +43,7 @@ const login = async function (req, res,next) {
       }, process.env.SECRET_KEY
     );
     user.tokens = user.tokens.concat(token)
+    await user.save()
 
     const { password, ...info } = user._doc;
     res
