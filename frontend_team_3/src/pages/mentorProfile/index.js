@@ -10,6 +10,7 @@ import { Localhost } from "../../config/api";
 import { loginFailure, loginStart, loginSuccess } from "../../features/user";
 
 const Mentor = ({ options, choose, setChoose }) => {
+    axios.defaults.withCredentials = true
     const user = useSelector(state => state.currentUser)
     const dispatch = useDispatch()
     const navigate = useNavigate()
@@ -49,7 +50,7 @@ const Mentor = ({ options, choose, setChoose }) => {
                 dispatch(loginSuccess(userInfo));
                 if (file)
                     await axios.post(`${Localhost}/api/v1/cv/upload/${user.id}`, file, config)
-                navigate("/", { replace: true })
+                navigate("/")
             } catch (e) {
                 dispatch(loginFailure());
                 console.log('unable create prfile: ' + e)

@@ -41,9 +41,9 @@ const cookieParser=require("cookie-parser")
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:3000",
-
+    origin: ["http://localhost:3000"],
     credentials: true, // some legacy browsers (IE11, various SmartTVs) choke on 204
+    exposedHeader: ['set-cookie']
   })
 );
 app.use(function (req, res, next) {

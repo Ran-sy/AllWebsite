@@ -10,6 +10,7 @@ import { Localhost } from "../../config/api";
 import { loginFailure, loginStart, loginSuccess } from "../../features/user";
 
 const Mentee = ({ options, choose, setChoose }) => {
+    axios.defaults.withCredentials = true
     const user = useSelector(state => state.currentUser)
     const dispatch = useDispatch()
     const navigate = useNavigate()
@@ -42,7 +43,7 @@ const Mentee = ({ options, choose, setChoose }) => {
               };
               
             try{
-                await axios.post(`${Localhost}/api/v1/menteeProfile`, profile, config);
+                await axios.post(`${Localhost}/api/v1/menteeProfile`, profile, config)
                 const userInfo = { ...user, role: 'mentor'}
                 dispatch(loginSuccess(userInfo));
             if(file){
@@ -51,7 +52,7 @@ const Mentee = ({ options, choose, setChoose }) => {
                 await axios.post(`${Localhost}/api/v1/cv/upload/${user._id}`, formData, config)
               
             }
-                navigate("/", {replace: true})
+                navigate("/")
             }catch(e){
                 dispatch(loginFailure());
                 console.log('unable create prfile: ' + e)

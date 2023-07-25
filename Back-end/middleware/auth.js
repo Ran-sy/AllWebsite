@@ -4,7 +4,7 @@ const User = require("../Models/userModel");
 const createError = require("../utils/createError");
 
 const auth = (req, res, next) => {
-  const token = req.cookies.accessToken;
+  const token = req.cookies?.accessToken;
     console.log(req.cookies)
   if (!token) return next(createError(401, "You are not authenticated!"));
 
