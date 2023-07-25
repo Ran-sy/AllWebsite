@@ -20,6 +20,9 @@ const getRequests = (req, res) => {
       if (!request) {
         return res.status(404).send("Unable to find user");
       }
+      request.forEach(req=>{
+        req.checkIsClosed(req)
+      })
       res.status(200).send(request);
     })
     .catch((e) => {
@@ -35,6 +38,7 @@ const getRequestsByID = (req, res) => {
       if (!request) {
         return res.status(404).send("Unable to find user");
       }
+      request.checkIsClosed(request)
       res.status(200).send(request);
     })
     .catch((e) => {
@@ -45,37 +49,20 @@ const getRequestsByID = (req, res) => {
 // getRequestByOwnerId///////////////////
 const getRequestsByOwnerId = (req, res) => {
   const _id = req.params.id;
-  Request.findOne({owner: _id})
+  Request.find({owner: _id})
     .then((request) => {
       if (!request) {
         return res.status(404).send("No requests found");
       }
+      request.forEach(req=>{
+        req.checkIsClosed(req)
+      })
       res.status(200).send(request);
     })
     .catch((e) => {
       res.status(500).send(e.message);
     });
 };
-
-
-const closeRequest = async (req, res) => {
-  try {
-      const _id = req.params.id;
-      const request = await Request.findById(_id)
-      if (!request) 
-          return res.status(404).send({ msg: `No Request found with this id: ${_id}` });
-      if(!request.progress === 'close')
-          return res.status(400).send({ msg: 'this request is already closed'})
-      if(!request.progress === 'open')
-          return res.status(400).send({ msg: 'this request is still open'})
-      request.progress = 'close';
-      request.save()
-      res.status(200).json({ request });
-  } catch (error) {
-      res.status(500).json({ error: error.message });
-  }
-};
-
 
 // patchRequets/////////////////////
 const patchRequets = async (req, res) => {
@@ -89,6 +76,7 @@ const patchRequets = async (req, res) => {
       return res.status(404).send("No request is found");
     }
     if(request.progress != "open") throw new Error(`Cannot edit, this request is already ${request.progress}`)
+    request.checkIsClosed(request)
 
     res.status(200).send(request);
   } catch (error) {
@@ -112,5 +100,4 @@ const deleteRequests = async (req, res) => {
   }
 }
 
-
-module.exports = { postRequests, getRequests, getRequestsByID, getRequestsByOwnerId, patchRequets, deleteRequests, closeRequest };
+module.exports = { postRequests, getRequests, getRequestsByID, getRequestsByOwnerId, patchRequets, deleteRequests };

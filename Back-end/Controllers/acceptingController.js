@@ -43,6 +43,7 @@ const acceptRequest = async (req, res) => {
 
     mentor.busyDays = mentor.busyDays.concat({ from, to })
     mentee.busyDays = mentee.busyDays.concat({ from, to })
+    request.time = { start: from, end: to }
     console.log(`busyDays: ${from, "..." , to}`)
     request.progress = "in progress";
     request.acceptedBy = acceptedUser;
@@ -98,6 +99,7 @@ const acceptOpp = async (req, res) => {
     })
     mentor.busyDays = mentor.busyDays.concat({ from, to })
     mentee.busyDays = mentee.busyDays.concat({ from, to })
+    opp.time = { start: from, end: to }
     console.log(`busyDays: ${from, "..." , to}`)
     opp.progress = "in progress";
     opp.acceptedBy = acceptedUser;

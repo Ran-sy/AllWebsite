@@ -20,6 +20,9 @@ const opportunitySchema = new mongoose.Schema({
         type: Number,
         required: [true, 'Duration in days required']
     },
+    time: {
+      start: { type: Date }, end: { type: Date }
+    },
     location: {
         type: String,
         trim: true,
@@ -57,6 +60,13 @@ const opportunitySchema = new mongoose.Schema({
 }, { timestamp: true }
 );
 
+opportunitySchema.methods.checkIsClosed = function(opp){
+    if(new Date(opp.time.end) < new Date()){
+        console.log('closing opportunity ', opp.title)
+        opp.progress = 'close';
+        opp.save();
+    }
+}
 // create model
 const Opportunity = mongoose.model('opportunity', opportunitySchema);
 

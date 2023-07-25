@@ -29,7 +29,10 @@ const requestSchema = new mongoose.Schema(
     duration: {
       type: Number,
       required: [true, 'Duration in days required']
-  },
+    },
+    time: {
+      start: { type: Date }, end: { type: Date }
+    },
     progress:{
       type:String,
       enum:["open", "in progress", "close"],
@@ -49,6 +52,14 @@ const requestSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+requestSchema.methods.checkIsClosed = function(request){
+  if(new Date(request.time.end) < new Date()){
+      console.log('closing request ', request.title)
+      request.progress = 'close';
+      request.save();
+  }
+}
 
 const Request = mongoose.model("Request", requestSchema);
 
