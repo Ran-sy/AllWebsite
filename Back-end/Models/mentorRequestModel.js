@@ -1,12 +1,11 @@
 const mongoose = require("mongoose");
-const Profile = require("../Models/profileModel");
+// const Profile = require("../Models/profileModel");
 
 const requestSchema = new mongoose.Schema(
   {
     title: {
         type: String, trim: true,
         required: [true, "Title is required"],
-        minlength: [3, "too short title name"],
     },
     description: {
         type: String, trim: true,
@@ -44,12 +43,13 @@ const requestSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+    applicants: [{
+      type: mongoose.Schema.Types.ObjectId,
+    }]
   },
   { timestamps: true }
 );
 
-requestSchema.methods.isBusy= function(){
-}
-
 const Request = mongoose.model("Request", requestSchema);
+
 module.exports = { Request };

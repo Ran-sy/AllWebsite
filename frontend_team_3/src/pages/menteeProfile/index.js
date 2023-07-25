@@ -34,11 +34,10 @@ const Mentee = ({ options, choose, setChoose }) => {
                 console.log('please login first')
                 dispatch(loginFailure());
             }
-            
             const config = {
                 headers: {
-                  'Content-Type': 'multipart/form-data',
-                  Authorization: `Bearer ${user.tokens[0]}`,
+                //   'Content-Type': 'multipart/form-data',
+                  'Cookie': `accessToken=${user.tokens[0]}`,
                 },
               };
               

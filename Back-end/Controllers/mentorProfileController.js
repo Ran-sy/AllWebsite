@@ -1,9 +1,11 @@
 const Profile = require("../Models/profileModel");
 const fs = require('fs');
 
-const PostMentor = (req, res) => {
-  let avatar = req.file ? req.file.fieldname : ""
-  const avatarPath = req.file ? req.file.path : "";
+const PostMentor = async (req, res) => {
+ let avatar = req.file ? req.file.fieldname : ""
+ const avatarPath = req.file ? req.file.path : "";
+ console.log(req.body)
+ try{
   let mentor = new Profile({
     ...req.body,
     lookingFor: req.body.lookingFor ? req.body.lookingFor : "mentee",
@@ -12,15 +14,14 @@ const PostMentor = (req, res) => {
   });
   mentor.updateRole(mentor);
 
-  mentor
-    .save()
-    .then((response) => {
-      res.status(200).send(response);
-    })
-    .catch((error) => {
-      if (avatar) deleteUploadedAvatar(avatarPath)
-      res.status(400).send(error.message);
-    });
+  await mentor.save()
+  res.status(200).send(mentor);
+      
+ }catch(e){
+  console.log(e.message)
+  if (avatar) deleteUploadedAvatar(avatarPath)
+  res.status(400).send(e.message)
+ }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////

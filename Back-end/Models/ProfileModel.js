@@ -13,6 +13,18 @@ const ProfileSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    university: {
+      type: String,
+      trim: true,
+    },
+    phone: {
+      type: String, 
+      trim: true
+    },
+    about: [{
+      type: String,
+      trim: true,
+    }],
     location: {
       type: String,
       trim: true,

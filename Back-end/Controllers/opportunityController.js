@@ -28,6 +28,38 @@ const getOpportunityById = async (req, res) => {
     }
 };
 
+
+const getOpportunityByUserId = async (req, res) => {
+    try {
+        const _id = req.params.id;
+        const opportunity = await Opportunity.findOne({owner: _id}).populate("acceptedBy")
+        if (!opportunity) {
+            return res.status(404).send({ msg: `No added opportunities for this user ${_id}` });
+        }
+        res.status(200).json({ opportunity });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+const closeOpportunity = async (req, res) => {
+    try {
+        const _id = req.params.id;
+        const opportunity = await Opportunity.findById(_id)
+        if (!opportunity) 
+            return res.status(404).send({ msg: `No Opportunity found with this id: ${_id}` });
+        if(!opportunity.progress === 'close')
+            return res.status(400).send({ msg: 'this opportunity is already closed'})
+        if(!opportunity.progress === 'open')
+            return res.status(400).send({ msg: 'this opportunity is still open'})
+        opportunity.progress = 'close';
+        opportunity.save()
+        res.status(200).json({ opportunity });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
 const updateOpportunity = async (req, res) => {
     try {
         const _id = req.params.id;
@@ -78,6 +110,8 @@ const deleteOpportunity = async (req, res) => {
 
 module.exports = {
     getAllOpportunities,
+    getOpportunityByUserId,
+    closeOpportunity,
     getOpportunityById,
     updateOpportunity,
     createOpportunity,

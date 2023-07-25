@@ -37,7 +37,12 @@ const Mentor = ({ options, choose, setChoose }) => {
                 console.log('please login first')
                 dispatch(loginFailure());
             }
-            const config = { headers: { 'Authorization': `Bearer ${user.tokens[0]}` } }
+            const config = { 
+                headers: {
+                //   'Content-Type': 'multipart/form-data',
+                  'Cookie': `accessToken=${user.tokens[0]}`,
+                },
+            }
             try {
                 await axios.post(`${Localhost}/api/v1/mentorProfile`, profile, config)
                 const userInfo = { ...user, role: 'mentee' }

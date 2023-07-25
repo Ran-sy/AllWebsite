@@ -1,12 +1,11 @@
 const mongoose = require('mongoose');
 
 // create schema
-const opportunitySchema = mongoose.Schema({
+const opportunitySchema = new mongoose.Schema({
     title: {
         type: String,
         trim: true,
         required: [true, "Title is required"],
-        minlength: [3, "too short title name"],
     },
     description: {
         type: String,
@@ -52,21 +51,13 @@ const opportunitySchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
     },
-    applicantIds: [{
+    applicants: [{
         type: mongoose.Schema.Types.ObjectId,
     }]
 }, { timestamp: true }
 );
 
-opportunitySchema.virtual('applicants', {
-    ref: 'User',
-    localField: 'applicantIds',
-    foreignField: '_id',
-    justOne: true
-});
-
-opportunitySchema.methods.isBusy = function () {
-}
 // create model
 const Opportunity = mongoose.model('opportunity', opportunitySchema);
+
 module.exports = Opportunity;
