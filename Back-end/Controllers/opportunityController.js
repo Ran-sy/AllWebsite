@@ -33,19 +33,20 @@ const getOpportunityById = async (req, res) => {
 };
 
 const getOpportunityByUserId = async (req, res) => {
-    try {
-        const _id = req.params.id;
-        const opportunity = await Opportunity.find({owner: _id}).populate("acceptedBy")
+    const _id = req.params.id;
+    Opportunity.find({owner: _id})
+      .then((opportunity) => {
         if (!opportunity) {
-            return res.status(404).send({ msg: `No added opportunities for this user ${_id}` });
+          return res.status(404).send("No opportunity found");
         }
         opportunity.forEach(opp=>{
-            opp.checkIsClosed(opp)
+          opp.checkIsClosed(opp)
         })
-        res.status(200).json({ opportunity });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+        res.status(200).send(opportunity);
+      })
+      .catch((e) => {
+        res.status(500).send(e.message);
+      });
 };
 
 const updateOpportunity = async (req, res) => {
@@ -84,13 +85,14 @@ const createOpportunity = async (req, res) => {
 const deleteOpportunity = async (req, res) => {
     try {
         const _id = req.params.id;
-        const opportunity = await Opportunity.findOneAndDelete(_id);
+        const opportunity = await Opportunity.findById(_id);
         if (!opportunity) {
             return res.status(404).json({ msg: ` No opportunity for this id ${_id}` });
         }
-        if (opportunity.progress != "open") res.status(400).send(`Cannot delete, this opportunity is already ${opportunity.progress}`)
+        if (opportunity.progress != "open") return res.status(400).send(`Cannot delete, this opportunity is already ${opportunity.progress}`)
+        await Opportunity.findByIdAndDelete(_id);
 
-        res.status(204).send('deleted');
+        res.status(204).send('Successfully deleted');
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

@@ -37,14 +37,6 @@ export const Login = (props) => {
           },
           { withCredentials: true }
         );
-        // document.cookie("accessToken", res.data.tokens[0], {
-        //           origin: "http://127.0.0.1",
-        //           expires: 600000000,
-        //           httpOnly: true,
-        //           secure: false,
-        //           sameSite: "none",
-        //         })
-        // document.cookie = "accessToken="+res.data.tokens[0]
         dispatch(loginSuccess(res.data));
         navigate("/", {replace: true});
       } catch (err) {

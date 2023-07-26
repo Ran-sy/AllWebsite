@@ -1,67 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './mentoropp.css'
 import Items from './Items';
+import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { Localhost } from "../../config/api";
 
 const MentoringOpportunities = () => {
-  const [data, setdata] = useState([
-    {
-      title: "Website UI design implementation",
-      time_and_date : "2022/ 07 / 31",
-      status: "Published",
-      requests: [{
-        username: "Balquees Hamdi",
-        img : "https://image.lexica.art/md2/37d7fb15-eed3-472b-bbae-57240a15704a",
-        title: "Front end developer",
-      },
-      {
-        username: "Balquees Hamdi",
-        img : "https://image.lexica.art/md2/37d7fb15-eed3-472b-bbae-57240a15704a",
-        title: "Front end developer",
-      },
-      {
-        username: "Balquees Hamdi",
-        img : "https://image.lexica.art/md2/37d7fb15-eed3-472b-bbae-57240a15704a",
-        title: "Front end developer",
-      },
-      ],
-    },
-    {
-      title: "Website UI design implementation",
-      time_and_date : "2022/ 07 / 31",
-      status: "closed",
-      requests: [],
-    },
-    {
-      title: "Website UI design implementation",
-      time_and_date : "2022/ 07 / 31",
-      status: "In progress",
-      requests: [{
-        username: "Balquees Hamdi",
-        img : "https://image.lexica.art/md2/37d7fb15-eed3-472b-bbae-57240a15704a",
-        title: "Front end developer",
-      },
-      {
-        username: "Balquees Hamdi",
-        img : "https://image.lexica.art/md2/37d7fb15-eed3-472b-bbae-57240a15704a",
-        title: "Front end developer",
-      },
-      {
-        username: "Balquees Hamdi",
-        img : "https://image.lexica.art/md2/37d7fb15-eed3-472b-bbae-57240a15704a",
-        title: "Front end developer",
-      },
+  axios.defaults.withCredentials = true;
+  const user = useSelector(state => state.currentUser);
+  const [data, setData] = useState([]);
 
-      ],
-    },
-    {
-      title: "Website UI design implementation",
-      time_and_date : "2022/ 07 / 31",
-      status: "closed",
-      requests: [],
-    },
-  ])
+  useEffect(() => {
+    const config = {
+      headers: { 'Cookie': `accessToken=${user?.tokens[0]}` },
+    };
+    const getMentorOpp = async () => {
+      if(!user.tokens[0]) {
+        return console.log('please login first')
+      }
+      try{
+        axios.get(`${Localhost}/api/opp/opp/owner/${user._id}`, config)
+        .then((res, err)=>{
+          if(err) console.log('error getting data..', err.message)
+          setData(res.data)
+        })
+      }catch(e){
+          console.log('unable get requests: ' + e)
+      }
+    }
+    getMentorOpp()
+  }, []);
 
-  const removeItem = (index) => setdata(data.filter((_, i) => i !== index));
+  const removeItem = (index, item) => {
+    const config = {
+      headers: { 'Cookie': `accessToken=${user.tokens[0]}`, },
+    };
+    try{
+      axios.delete(`${Localhost}/api/opp/opp/${item._id}`, config)
+      .then((res, err)=>{
+        if(err) console.log('error deleting data..', err.message)
+        console.log('deleted successfully ', item._id)
+        setData(res.data)
+        setData(data.filter((_, i) => i !== index))
+      })
+    }catch(e){
+        console.log('unable delete opportunity: ' + e.message)
+    }
+  }
 
   return (
     <div style={{position:'relative'}}>
@@ -73,17 +59,17 @@ const MentoringOpportunities = () => {
           <p className="mentor">My Mentoring Opportunities</p>
           <p>
             Post a new opportunity &nbsp;
-            <a href="#" target="_blank">
+            <Link to='/PostOpp'>
               <i className="fas fa-plus-square icon1"></i>
-            </a>
+              </Link>
           </p>
         </div>
       </aside>
       <section className='mentoringsection'>
         <p className="hidden">Applications</p>
         {
-          data.map((item, i) => <Items item={item} key={i} removeItem={()=> removeItem(i)}/>)
-        }
+        data?.map((item, i) => (
+          <Items item={item} key={item._id} removeItem={() => removeItem(i, item)} />))}
          
       </section>
     </div>

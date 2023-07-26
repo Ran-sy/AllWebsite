@@ -88,13 +88,13 @@ const patchRequets = async (req, res) => {
 const deleteRequests = async (req, res) => {
   try {
     const _id = req.params.id;
-    const request = await Request.findByIdAndDelete(_id);
+    const request = await Request.findById(_id);
     if (!request) {
       return res.status(404).send("Unable to find request");
     }
-    if(request.progress != "open") res.status(400).send(`Cannot delete, this request is already ${request.progress}`)
-
-    res.status(200).send(request);
+    if(request.progress != "open") return res.status(400).send(`Cannot delete, this request is already ${request.progress}`)
+    await Request.findByIdAndDelete(_id);
+    res.status(200).send('successfully deleted');
   } catch (e) {
     res.status(500).send(e.message);
   }

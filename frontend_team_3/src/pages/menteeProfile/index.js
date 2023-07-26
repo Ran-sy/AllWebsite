@@ -37,10 +37,9 @@ const Mentee = ({ options, choose, setChoose }) => {
             }
             const config = {
                 headers: {
-                //   'Content-Type': 'multipart/form-data',
                   'Cookie': `accessToken=${user.tokens[0]}`,
                 },
-              };
+            };
               
             try{
                 await axios.post(`${Localhost}/api/v1/menteeProfile`, profile, config)

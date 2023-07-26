@@ -8,12 +8,12 @@ const acceptRequest = async (req, res) => {
     const {id, acceptedUser} = req.body; 
     let isAnApplicant = false
     const request = await Request.findById(id)
-      .populate("owner acceptedBy applicants")
+      .populate("owner applicants")
 
     if (!request) return res.status(404).send("Unable to find request");
     if (request.progress === "in progress")
       return res.status(400).send(`This request is already accepted by ${req.acceptedBy}`);
-    else if (request.progress === "closed")
+    else if (request.progress === "close")
       return res.status(400).send("This request is already closed");
     if (req.user.id !== request.owner.toString())
       return res.status(401).send("You need to be the owner to perform this action")
@@ -47,6 +47,7 @@ const acceptRequest = async (req, res) => {
     console.log(`busyDays: ${from, "..." , to}`)
     request.progress = "in progress";
     request.acceptedBy = acceptedUser;
+    console.log(request)
 
     await request.save();
     await mentor.save();
@@ -64,11 +65,11 @@ const acceptOpp = async (req, res) => {
     const {id, acceptedUser} = req.body; 
     let isAnApplicant = false;
     const opp = await Opportunity.findById(id)
-      .populate("owner acceptedBy applicants")
+      .populate("owner applicants")
     if (!opp) return res.status(404).send("Unable to find opportunity");
     if (opp.progress === "in progress")
       return res.status(400).send(`This opportunity is already accepted by ${opp.acceptedBy}`);
-    else if (opp.progress === "closed")
+    else if (opp.progress === "close")
       return res.status(400).send("This opportunity is already closed");
     if (req.user.id !== opp.owner.toString())
       return res.status(401).send("You need to be the owner to perform this action")
@@ -113,5 +114,66 @@ const acceptOpp = async (req, res) => {
   }
 };
 
+const rejectRequest = async (req, res) => {
+  try {
+    const {id, rejectedUser} = req.body; 
+    let isAnApplicant = false;
+    const request = await Request.findById(id)
+      .populate("owner applicants")
 
-module.exports = { acceptRequest, acceptOpp };
+    if (!request) return res.status(404).send("Unable to find request");
+    if (request.progress === "in progress")
+      return res.status(400).send(`This request is already accepted by ${req.acceptedBy}`);
+    else if (request.progress === "close")
+      return res.status(400).send("This request is already closed");
+    if (req.user.id !== request.owner.toString())
+      return res.status(401).send("You need to be the owner to perform this action")
+    request.applicants.forEach((applicant, i)=>{
+      if (applicant.toString() === rejectedUser){
+        isAnApplicant = true; 
+        request.applicants.splice(i, i)
+        console.log(applicant, ' is rejected!')
+      }
+    })
+    if ( !isAnApplicant)
+      return res.status(400).send('Mentor is not an applicant')
+
+    await request.save();
+    res.status(200).send(request);
+  } catch (e) {
+    res.status(500).send(e.message);
+  }
+};
+
+const rejectOpp = async (req, res) => {
+  try {
+    const {id, rejectedUser} = req.body; 
+    let isAnApplicant = false;
+    const opp = await Opportunity.findById(id)
+      .populate("owner applicants")
+
+    if (!opp) return res.status(404).send("Unable to find opp");
+    if (opp.progress === "in progress")
+      return res.status(400).send(`This opp is already accepted by ${req.acceptedBy}`);
+    else if (opp.progress === "close")
+      return res.status(400).send("This opp is already closed");
+    if (req.user.id !== opp.owner.toString())
+      return res.status(401).send("You need to be the owner to perform this action")
+    opp.applicants.forEach((applicant, i)=>{
+      if (applicant.toString() === rejectedUser){
+        isAnApplicant = true; 
+        opp.applicants.splice(i, i)
+        console.log(applicant, ' is rejected!')
+      }
+    })
+    if ( !isAnApplicant)
+      return res.status(400).send('Mentor is not an applicant')
+
+    await opp.save();
+    res.status(200).send(opp);
+  } catch (e) {
+    res.status(500).send(e.message);
+  }
+};
+
+module.exports = { acceptRequest, acceptOpp, rejectRequest, rejectOpp };
