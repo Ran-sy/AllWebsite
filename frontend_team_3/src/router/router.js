@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom"
 import Wizard from "../components/mneteeProfORmentorProf"
 import MentoringOpportunities from "../components/mentorOpp/MentoringOpportunities"
 import MentoringRequest from "../components/mentorOpp/MentoringRequest"
-import Profile from "../components/userprofile/Profile"
+import Profile from "../pages/Profile/Profile"
 
 import {
     Login, Resgister, ContactUs, MentoringOpportunityForm,

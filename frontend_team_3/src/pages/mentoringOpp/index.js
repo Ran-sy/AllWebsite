@@ -35,20 +35,17 @@ const MentoringOpportunityForm = () => {
     e.preventDefault();
     dispatch(loginStart());
     const addNewOPP = async () => {
-      if (!user.tokens[0]) {
-        console.log('please login first')
-        dispatch(loginFailure());
-      }
-      const config = { headers: { 'Authorization': `Bearer ${user.tokens[0]}` } }
       // try {
-      await axios.post(`${Localhost}/api/opp/opp`, body, config)
+      await axios
+        .post(`${Localhost}/api/opp/opp`, body, { withCredentials: true })
         .then((res) => {
-          setOppId(res.data.id);
-          Success('ADD OPPERTUNITY SUCCESSFULLY')
-        }).catch((error) => {
-          dispatch(loginFailure());
-          Error('FAILED TO ADD OPPERTUNITY' + error)
+          setOppId(res.data._id);
+          Success("ADD OPPERTUNITY SUCCESSFULLY");
         })
+        .catch((error) => {
+          dispatch(loginFailure());
+          Error("FAILED TO ADD OPPERTUNITY" + error);
+        });
 
     }
     addNewOPP()

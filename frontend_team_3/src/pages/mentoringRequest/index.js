@@ -326,13 +326,10 @@ const MentorReqForm = () => {
         dispatch(loginStart());
 
         const addReq = async () => {
-            if (!user.tokens[0]) {
-                console.log('please login first')
-                dispatch(loginFailure());
-            }
-            const config = { headers: { 'Authorization': `Bearer ${user.tokens[0]}` } }
             try {
-                await axios.post(`${Localhost}/api/req/request`, body, config);
+                await axios.post(`${Localhost}/api/req/request`, body, {
+                  withCredentials: true,
+                });
                 Success('added successfully')
             } catch (e) {
                 dispatch(loginFailure());

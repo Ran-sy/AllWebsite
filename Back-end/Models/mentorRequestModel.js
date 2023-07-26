@@ -10,7 +10,7 @@ const requestSchema = new mongoose.Schema(
     },
     description: {
         type: String, trim: true,
-        required: [true, 'Description is required'],
+      
     },
     helpWith: [{type: String}],
     requirements: [{type: String}],

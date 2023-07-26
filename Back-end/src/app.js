@@ -1,36 +1,35 @@
 // libraries
-const cors = require('cors')
-const express = require('express')
-const app = express()
-require("dotenv").config()
+const cors = require("cors");
+const express = require("express");
+const app = express();
+require("dotenv").config();
 const passport = require("passport");
-require('../config/dbConnection')
- require("../passport");
-
+require("../config/dbConnection");
+require("../passport");
 
 // libraries
 
-const mentorRouter = require('../Routes/mentorRouter')
-const userRouter = require('../Routes/userRouter')
-const opportunityRouter = require('../Routes/opportunityRouter');
-const mailRouter = require("../Routes/mailRouter")
+const mentorRouter = require("../Routes/mentorRouter");
+const userRouter = require("../Routes/userRouter");
+const opportunityRouter = require("../Routes/opportunityRouter");
+const mailRouter = require("../Routes/mailRouter");
 const menteeRouter = require("../Routes/menteeRouter");
 const messageRouter = require("../Routes/messageRouter");
 const commentRouter = require("../Routes/commentsRouter");
-const requestRounter = require("../Routes/requestRouter")
+const requestRounter = require("../Routes/requestRouter");
 const socialLoginRouter = require("../Routes/SocialAuthRouter");
-const newsletterRouter = require('../Routes/newsletterRouter')
-const passwordRouter = require('../Routes/passwordRouter')
-const acceptingRouter = require('../Routes/acceptingRouter');
-// const { logger } = require('../middleware/reglogger')
-// const errorHandle = require('../middleware/errorLogger')
-const corsOptions = require('../config/corsOptions')
-const download = require('../Routes/downloadRouter')
+const newsletterRouter = require("../Routes/newsletterRouter");
+const passwordRouter = require("../Routes/passwordRouter");
+const acceptingRouter = require("../Routes/acceptingRouter");
+const { logger } = require("../middleware/reglogger");
+const errorHandle = require("../middleware/errorLogger");
+const corsOptions = require("../config/corsOptions");
+const download = require("../Routes/downloadRouter");
 const session = require("express-session");
 const calendar = require("../Routes/calenderRouter");
-const replieRouter=require("../Routes/commentsRouter")
-const port = process.env.PORT || 5000
-const cookieParser=require("cookie-parser")
+const replieRouter = require("../Routes/replieRouter");
+const port = process.env.PORT || 5000;
+const cookieParser = require("cookie-parser");
 
 // useconst calendar = require("../Routes/calenderRouter");
 
@@ -45,14 +44,14 @@ app.use(
   })
 );
 app.use(function (req, res, next) {
-   res.header("Content-Type", "application/json;charset=UTF-8");
-   res.header("Access-Control-Allow-Credentials", true);
-   res.header(
-     "Access-Control-Allow-Headers",
-     "Origin, X-Requested-With, Content-Type, Accept"
-   );
-   next();
- });
+  res.header("Content-Type", "application/json;charset=UTF-8");
+  res.header("Access-Control-Allow-Credentials", true);
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
 app.use(
   session({
     name: "session",
@@ -65,26 +64,26 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(express.json())
+app.use(express.json());
 
-// app.use(logger)
-// app.use(errorHandle);
-app.use('/api/v1', passwordRouter) 
-app.use('/api/v1', newsletterRouter)
-app.use('/api/auth', userRouter)
-app.use('/api/v1', mentorRouter)
-app.use('/api/auth', acceptingRouter)
-app.use('/api/opp', opportunityRouter);
-app.use('/api/req', requestRounter);
-app.use('/api/email', mailRouter)
-app.use('/api/v1', menteeRouter);
-app.use('/api/v1', messageRouter);
+app.use(logger);
+app.use(errorHandle);
+app.use("/api/v1", passwordRouter);
+app.use("/api/v1", newsletterRouter);
+app.use("/api/auth", userRouter);
+app.use("/api/v1", mentorRouter);
+app.use("/api/auth", acceptingRouter);
+app.use("/api/opp", opportunityRouter);
+app.use("/api/req", requestRounter);
+app.use("/api/email", mailRouter);
+app.use("/api/v1", menteeRouter);
+app.use("/api/v1", messageRouter);
 app.use("/auth", socialLoginRouter);
-app.use('/api/v1', commentRouter);
+app.use("/api/v1", commentRouter);
 app.use("/uploads", express.static("uploads"));
-app.use('/api/v1', download)
+app.use("/api/v1", download);
 app.use(calendar);
-app.use(replieRouter)
+app.use(replieRouter);
 app.use((err, req, res, next) => {
   const errorStatus = err.status || 500;
   const errorMessage = err.message || "Something went wrong!";
@@ -92,5 +91,5 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(port, () => {
-  console.log("The localhost is " + port)
-})
+  console.log("This Application is running On Localhost  " + port);
+});

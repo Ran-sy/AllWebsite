@@ -15,7 +15,11 @@ const ResetPassword = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(`${Localhost}/api/v1/resetPassword/${id}/${token}`, { password: newPassword });
+            const response = await axios.post(
+              `${Localhost}/api/v1/resetPassword/${id}/${token}`,
+              { password: newPassword },
+              { withCredentials: true }
+            );
             Success(response.data)
             navigate("/login");
         } catch (e) {

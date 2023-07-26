@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import './style.css'
 import Form from "react-bootstrap/Form";
 import { Accordion, Badge, Button, Stack } from "react-bootstrap";
@@ -13,20 +13,41 @@ import Search from "./search/Search";
 import MentorInLocation from "../../components/homepage/MentorLocation";
 import { Link } from "react-router-dom";
 import { Localhost } from "../../config/api";
+import { useDispatch } from "react-redux";
 import axios from "axios";
+import { loginFailure, loginStart, loginSuccess } from "../../features/user";
 
 const Home = () => {
   const [input, setInput] = useState('')
   const [message, setMessage] = useState('')
-
+const dispatch = useDispatch();
   const handleClick = async () => {
     try {
-      const response = await axios.post(`${Localhost}/api/v1/subscribe`, { email: input });
+      const response = await axios.post(
+        `${Localhost}/api/v1/subscribe`,
+        { email: input },
+        {
+          withCredentials: true,
+        }
+      );
       setMessage(response.data);
     } catch (error) {
       setMessage('Failed to send email initaivion');
     }
   }
+  const getUser = async () => {
+    try {
+      const url = `http://localhost:5000/auth/login/success`;
+      const { data } = await axios.get(url, { withCredentials: true });
+      console.log(data);
+      dispatch(loginSuccess(data));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  useEffect(() => {
+    getUser();
+  });
 
   return (
     <>

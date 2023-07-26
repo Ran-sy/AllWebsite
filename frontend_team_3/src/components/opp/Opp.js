@@ -100,24 +100,22 @@ import { useParams } from 'react-router-dom'
 const Opp = () => {
    const [data, setData] = useState([])
    const user = useSelector(state => state.currentUser)
-   const config = { headers: { 'Authorization': `Bearer ${user.tokens[0]}` } }
    const { id } = useParams()
    const dispatch = useDispatch()
 
    useEffect(() => {
       const getOpp = async () => {
-         if (!user.tokens[0]) {
-            console.log("please login first");
-            dispatch(loginFailure());
-         }
+     
          await axios
-            .get(`${Localhost}/api/opp/opp/${id}`, config)
-            .then((res) => {
-               setData(res.data);
-            })
-            .catch((error) => {
-               console.log(error);
-            });
+           .get(`${Localhost}/api/opp/opp/${id}`, {
+             withCredentials: true,
+           })
+           .then((res) => {
+             setData(res.data);
+           })
+           .catch((error) => {
+             console.log(error);
+           });
       };
       getOpp();
    }, [id]);

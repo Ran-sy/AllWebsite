@@ -2,7 +2,7 @@ const { Request } = require("../Models/mentorRequestModel");
 
 // postRequests////////////////////////
 const postRequests = (req, res) => {
-  const request = new Request({ ...req.body, owner: req.user._id });
+  const request = new Request({ ...req.body, owner: req.user.id });
   request
     .save()
     .then((request) => {

@@ -695,29 +695,20 @@ const Mentee = ({ options, choose, setChoose }) => {
         skills: false,
         location: false,
     });
+     
 
     const handleSubmit = (e) => {
         e.preventDefault();
         dispatch(loginStart());
         const addNewMentee = async () => {
-            if (!user.tokens[0]) {
-                console.log('please login first')
-                dispatch(loginFailure());
-            }
-
-            const config = {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    Authorization: `Bearer ${user.tokens[0]}`,
-                },
-            };
+            
             try {
-                await axios.post(`${Localhost}/api/v1/menteeProfile`, profile, config);
+                await axios.post(`${Localhost}/api/v1/menteeProfile`, profile,  { withCredentials: true });
                 const userInfo = { ...user, role: 'mentor' }
                 if (file) {
                     const formData = new FormData();
                     formData.append('cv', file);
-                    await axios.post(`${Localhost}/api/v1/cv/upload/${user._id}`, formData, config)
+                    await axios.post(`${Localhost}/api/v1/cv/upload/${user._id}`, formData,  { withCredentials: true })
 
                 }
                 dispatch(loginSuccess(userInfo));

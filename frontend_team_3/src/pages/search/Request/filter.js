@@ -10,23 +10,17 @@ const RequestsFilter = (props) => {
     const [filterArr, setFilterArr] = useState([]);
     const user = useSelector(state => state.currentUser)
     const dispatch = useDispatch()
-    const config = { headers: { 'Authorization': `Bearer ${user.tokens[0]}` } }
-    console.log(user.token);
-
+   
     useEffect(() => {
         const getRequests = async () => {
-            if (!user.tokens[0]) {
-                console.log('please login first')
-                dispatch(loginFailure());
-            }
             await axios
-                .get(`${Localhost}/api/req/request`, config)
-                .then((response) => {
-                    setFilterArr(response.data);
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
+              .get(`${Localhost}/api/req/request`, { withCredentials: true })
+              .then((response) => {
+                setFilterArr(response.data);
+              })
+              .catch((error) => {
+                console.log(error);
+              });
         }
         getRequests()
     }, []);

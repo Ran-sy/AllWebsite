@@ -13,16 +13,12 @@ const FilterMenotrs = (props) => {
     const [filterMentor, setFilterMentor] = useState([]);
   const user = useSelector((state) => state.currentUser);
   const dispatch = useDispatch();
-  const config = { headers: { Authorization: `Bearer ${user.tokens[0]}` } };
 
   useEffect(() => {
     const getMentors = async () => {
-      if (!user.tokens[0]) {
-        console.log("please login first");
-        dispatch(loginFailure());
-      }
+      
       await axios
-        .get(`${Localhost}/api/v1/mentorProfile`, config)
+        .get(`${Localhost}/api/v1/mentorProfile`, { withCredentials: true })
         .then((res) => {
           setFilterMentor(res.data);
         })
