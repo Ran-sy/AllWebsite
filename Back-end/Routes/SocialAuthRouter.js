@@ -3,6 +3,17 @@ const passport = require("passport");
 
 const router = express.Router();
 const CLIENT_URL = "http://localhost:3000";
+
+router.get("/login/success", (req, res) => {
+  if (req.user) {
+    res.status(200).json({
+      user: req.user,
+    });
+  } else {
+    res.status(403).json({ error: true, message: "Not Authorized" });
+  }
+});
+
 router.get(
   "/google",
   passport.authenticate("google", {
@@ -15,12 +26,12 @@ router.get(
   passport.authenticate(
     "google",
 
-    { failureRedirect: "/login", successRedirect: CLIENT_URL },
+    { failureRedirect: "/login", successRedirect: CLIENT_URL }
   ),
   (req, res) => {
     res
       .cookie("accessToken", token, {
-        httpOnly: true,
+        httpOnly: false,
       })
       .status(200)
       .send(info);
@@ -37,7 +48,7 @@ router.get(
   (req, res) => {
     res
       .cookie("accessToken", token, {
-        httpOnly: true,
+        httpOnly: false,
       })
       .status(200)
       .send(info);
@@ -58,7 +69,7 @@ router.get(
   (req, res) => {
     res
       .cookie("accessToken", token, {
-        httpOnly: true,
+        httpOnly: false,
       })
       .status(200)
       .send(info);
