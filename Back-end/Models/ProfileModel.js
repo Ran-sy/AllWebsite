@@ -59,6 +59,7 @@ const ProfileSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+
 ProfileSchema.methods.updateRole = async function (mentor) {
   try {
     await User.findByIdAndUpdate(
@@ -75,5 +76,4 @@ ProfileSchema.methods.updateRole = async function (mentor) {
 }
 
 const Profile = mongoose.model("Profile", ProfileSchema);
-
 module.exports = Profile;

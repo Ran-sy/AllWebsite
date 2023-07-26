@@ -26,7 +26,6 @@ const addNewMentee = (req, res, next) => {
     user: req.user._id,
   });
   mentee.updateRole(mentee);
-
   mentee
     .save()
     .then((response) => {
@@ -67,7 +66,7 @@ function deleteUploadedAvatar(avatarPath) {
 const getMentee = async (req, res, next) => {
   const _id = req.params.id;
   Profile.findById(_id)
-    .populate({ path: "user dealtWith", select: "-tokens" })
+    .populate('user dealtWith')
     .then((mentee) => {
       if (!mentee) {
         return res.status(404).send("mentee not found");

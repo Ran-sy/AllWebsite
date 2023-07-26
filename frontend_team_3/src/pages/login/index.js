@@ -12,6 +12,7 @@ import { useDispatch } from "react-redux";
 import axios from "axios";
 import { Localhost } from "../../config/api";
 import { loginFailure, loginStart, loginSuccess } from "../../features/user";
+import { Error, Success } from "../../components/Toast";
 
 export const Login = (props) => {
   const dispatch = useDispatch();
@@ -38,9 +39,11 @@ export const Login = (props) => {
           { withCredentials: true }
         );
         dispatch(loginSuccess(res.data));
-        navigate("/");
+        navigate("/Profiles");
+        Success('Login succufully')
       } catch (err) {
         dispatch(loginFailure());
+        Error('Login failed')
       }
     }
   }
@@ -49,6 +52,7 @@ export const Login = (props) => {
     if (pass !== "" && show === "Show") {
       setShow("Hide");
       setPassType("text");
+      //   console.log(show);
     } else if (show === "Hide") {
       setShow("Show");
       setPassType("password");
@@ -90,20 +94,6 @@ export const Login = (props) => {
     }
   };
 
-  // const handleGoogleLogin = async () => {
-  //   const provider = new GoogleAuthProvider();
-  //   const result = await signInWithPopup(auth, provider);
-  //   const user = result.user;
-  //   console.log(user);
-  //   console.log("Logged in successfully");
-  // };
-  // const handleFacebookLogin = async () => {
-  //   const provider = new FacebookAuthProvider();
-  //   const result = await signInWithPopup(auth, provider);
-  //   const user = result.user;
-  //   console.log(user);
-  //   console.log("Logged in successfully");
-  // };
   const google = () => {
     window.open(`http://localhost:5000/auth/google/callback`, "_self");
   };
@@ -173,12 +163,12 @@ export const Login = (props) => {
         </div>
         <div className="switch1">
           <p style={{ fontSize: "15px" }}>Not a member yet ? </p>
-          <button
+          <Link
             className="link-btn"
-            onClick={() => props.onFormSwitch("register")}
+            to={"/register"}
           >
             click here to sign up
-          </button>
+          </Link>
         </div>
       </div>
     </div>

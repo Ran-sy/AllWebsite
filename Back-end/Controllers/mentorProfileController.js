@@ -61,10 +61,9 @@ const GetMentors = async (req, res) => {
 const getById = async (req, res) => {
   try {
     const _id = req.params.id;
-    const mentor = await Profile.findById(_id).populate({
-      path: "user dealtWith",
-      select: "-tokens",
-    });
+    const mentor = await Profile.findById(_id).populate(
+      'user dealtWith'
+    );
     if (!mentor) {
       res.status(404).send("UNABLE TO FIND Mentor");
     } else {

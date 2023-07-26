@@ -12,6 +12,10 @@ html {
   --grey: #fafafa;
 }
 
+textarea {
+  pointer-events: fill
+}
+
 @font-face {
   font-family: "Inter";
   src: url("./assets/Fonts/Inter-VariableFont_slnt,wght.ttf");

@@ -9,10 +9,37 @@ import Offcanvas from 'react-bootstrap/Offcanvas';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import './Navbar.css';
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import axios from 'axios';
+import { Localhost } from '../../../config/api';
+import { useDispatch, useSelector } from 'react-redux';
+import { Error, Success } from '../../Toast';
+import { loginFailure, logout } from '../../../features/user';
 
 
 const MyNavbar = () => {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const userk = useSelector(state => state.currentUser)
+
+  const logoutp = async () => {
+    if (!userk.tokens[0]) {
+      console.log('please login first')
+      dispatch(loginFailure());
+    }
+    const config = { headers: { 'Authorization': `Bearer ${userk.tokens[0]}` } }
+    try {
+      await axios.delete(`${Localhost}/api/auth/logout`, config, {
+        withCredentials: true
+      })
+      dispatch(logout())
+      navigate('/login')
+      Success('logout Success')
+    } catch (e) {
+      Error("Logout failed:", e);
+    }
+  }
+
   const [isClick, setIsClick] = useState(false)
   const user = {
     id: 1,
@@ -127,7 +154,7 @@ const MyNavbar = () => {
                       </li>
                       <li className="nav-item"><hr className="divider bg-white m-0" /></li>
                       <li className="nav-item">
-                        <Link to="/" className="nav-link text-light text-capitalize fw-bold" >log out</Link>
+                        <Link onClick={logoutp} className="nav-link text-light text-capitalize fw-bold" >log out</Link>
                       </li>
                     </ul>)}
                   </Nav.Link>

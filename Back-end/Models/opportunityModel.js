@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 // create schema
-const opportunitySchema = mongoose.Schema({
+const opportunitySchema = new mongoose.Schema({
     title: {
         type: String,
         trim: true,
@@ -41,7 +41,8 @@ const opportunitySchema = mongoose.Schema({
     expOutcome: [{ type: String }],
     owner: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true
+        required: true,
+        ref: 'User'
     },
     progress: {
         type: String,
@@ -56,7 +57,7 @@ const opportunitySchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
     }]
 }, { timestamp: true }
-);
+)
 
 opportunitySchema.virtual('applicants', {
     ref: 'User',
@@ -65,8 +66,6 @@ opportunitySchema.virtual('applicants', {
     justOne: true
 });
 
-opportunitySchema.methods.isBusy = function () {
-}
 // create model
-const Opportunity = mongoose.model('opportunity', opportunitySchema);
+const Opportunity = mongoose.model("Opportunity", opportunitySchema);
 module.exports = Opportunity;
