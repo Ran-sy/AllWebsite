@@ -3,8 +3,6 @@ const createError = require("../utils/createError")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 require("dotenv").config();
-
-
 const register = async function (req, res, next) {
   try {
     if (!req.body.name || !req.body.email || !req.body.password) {
@@ -41,12 +39,11 @@ const login = async function (req, res, next) {
 
     const token = jwt.sign(
       {
-        id: user._id.toString()
-      }, process.env.SECRET_KEY
+        id: user._id
+      }, process.env.SECRET_KEY,
     );
     user.tokens = user.tokens.concat(token)
     await user.save()
-
     const { password, ...info } = user._doc;
     res
       .cookie("accessToken", token, {

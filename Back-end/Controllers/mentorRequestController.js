@@ -46,15 +46,14 @@ const getRequestsByID = (req, res) => {
 // patchRequets/////////////////////
 const patchRequets = async (req, res) => {
   try {
-    const _id = req.params.id;
-    const request = await Request.findByIdAndUpdate(_id, req.body, {
-      new: true,
-      runValidators: true,
-    });
+    const id = req.params.id;
+    const request = await Request.findOneAndUpdate({ _id: id, owner: req.user._id },
+      req.body,
+      { new: true, runValidators: true });
     if (!request) {
       return res.status(404).send("No request is found");
     }
-    if(request.progress != "open") throw new Error(`Cannot edit, this request is already ${request.progress}`)
+    if (request.progress != "open") throw new Error(`Cannot edit, this request is already ${request.progress}`)
 
     res.status(200).send(request);
   } catch (error) {
@@ -67,11 +66,11 @@ const patchRequets = async (req, res) => {
 const deleteRequests = async (req, res) => {
   try {
     const _id = req.params.id;
-    const request = await Request.findByIdAndDelete(_id);
+    const request = await Request.findOneAndDelete(_id);
     if (!request) {
       return res.status(404).send("Unable to find request");
     }
-    if(request.progress != "open") res.status(400).send(`Cannot delete, this request is already ${request.progress}`)
+    if (request.progress != "open") res.status(400).send(`Cannot delete, this request is already ${request.progress}`)
 
     res.status(200).send(request);
   } catch (e) {

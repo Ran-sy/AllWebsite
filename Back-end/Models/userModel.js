@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcryptjs = require("bcryptjs");
-const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer')
 require('dotenv').config()
 
@@ -64,7 +63,6 @@ userSchema.virtual("messages", {
   foreignField: "sender",
   localField: "_id"
 })
-
 
 
 userSchema.pre("save", async function () {
