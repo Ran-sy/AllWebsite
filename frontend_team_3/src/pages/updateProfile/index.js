@@ -1,5 +1,5 @@
-import React, { useState,useEffect } from "react";
-import { useSelector,useDispatch } from 'react-redux';
+import React, { useState } from "react";
+import { useSelector } from 'react-redux';
 import "./style.css";
 import SidaNav2 from "../../pages/showReq/sideBar/index";
 import hero from "../../assets/images/colored_background.jpg";
@@ -12,11 +12,10 @@ import Mail from "@iconscout/react-unicons/icons/uil-fast-mail";
 import { Localhost } from '../../config/api';
 import axios from 'axios';
 
+
 import { Upload, Button } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
-
-
-
+import { useParams } from "react-router";
 const { Dragger } = Upload;
 
 // ====================================================
@@ -24,53 +23,55 @@ const { Dragger } = Upload;
 // ================================================
 
 const UpdateProfile = () => {
-  
 
-////////////////////////Upload Part////////////////////////////////////
+    const { id } = useParams()
+    ////////////////////////Upload Part////////////////////////////////////
     const [file, setFile] = useState(null);
 
-    const user = useSelector(state=> state.currentUser)
-    
-      
-      const token = user.tokens[0]
-      const userId = user._id
-    
-      const handleFileChange = (info) => {
-      const fileList = [...info.fileList];
-      if (fileList.length > 0) {
-        setFile(fileList[0].originFileObj);
-      }
-    };
-  
-    const handleUpload = async () => {
-      if (!file || !token|| !userId) {
-        return;
-      }
-  
-      const formData = new FormData();
-      formData.append('cv', file)
-  
-      try {
-        const response = await axios.post(
-          `${Localhost}/api/v1/cv/upload/${userId}`,
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-              Authorization: `Bearer ${token}`
-            },
-          }
-        );
-  
-        if (response.status === 200) {
-          console.log('CV uploaded successfully');
-          alert(response.data)
-        } else {
-          console.log('CV upload failed');
+    const user = useSelector(state => state.currentUser)
+
+    const token = user.tokens[0]
+    const userId = user._id
+
+    const handleFileChange = (info) => {
+        const fileList = [...info.fileList];
+        if (fileList.length > 0) {
+            setFile(fileList[0].originFileObj);
         }
-      } catch (error) {
-        console.log('Error uploading CV:', error);
-        
+    };
+
+    const handleUpload = async () => {
+        // const res = await axios.patch(`${Localhost}/api/v1/mentorProfile/${id}`, {
+
+        // })
+
+        if (!file || !token || !userId) {
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('cv', file)
+
+        try {
+            const response = await axios.post(
+                `${Localhost}/api/v1/cv/upload/${userId}`,
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        Authorization: `Bearer ${token}`
+                    },
+                }
+            );
+
+            if (response.status === 200) {
+                console.log('CV uploaded successfully');
+                // alert(response.data)
+            } else {
+                console.log('CV upload failed');
+            }
+        } catch (error) {
+            console.log('Error uploading CV:', error);
         }
     };
     ////////////////////////END UPLOAD PART///////////////////////
@@ -238,9 +239,11 @@ const UpdateProfile = () => {
                                             <label htmlFor="" className=" w-50">
                                                 from
                                             </label>
+                                            <input />
                                             <label htmlFor="" className=" w-50">
                                                 to
                                             </label>
+                                            <input />
                                         </div>
                                         {/** right-lab */}
                                     </div>{" "}
@@ -383,18 +386,18 @@ const UpdateProfile = () => {
                                             <div className="upload-box d-flex p-1 m-2 flex-colum justify-content-center align-items-center ">
                                                 {/* <Upload.Dragger className='upld-ic' >      */}
                                                 <Dragger
-        accept=".jpeg, .png , .gif , .mp4 , .ai , .psd , .word , .ppt ,.pdf"
-        className="upld-ic"
-        fileList={[]}
-        onChange={handleFileChange}
-        beforeUpload={() => false}
-      >
-        <p className="ant-upload-drag-icon">
-          <InboxOutlined />
-        </p>
-        <p className="ant-upload-text">Click or drag file to this area to upload</p>
-        <p className="ant-upload-hint">Support for a single or bulk upload.</p>
-      </Dragger>
+                                                    accept=".jpeg, .png , .gif , .mp4 , .ai , .psd , .word , .ppt ,.pdf"
+                                                    className="upld-ic"
+                                                    fileList={[]}
+                                                    onChange={handleFileChange}
+                                                    beforeUpload={() => false}
+                                                >
+                                                    <p className="ant-upload-drag-icon">
+                                                        <InboxOutlined />
+                                                    </p>
+                                                    <p className="ant-upload-text">Click or drag file to this area to upload</p>
+                                                    <p className="ant-upload-hint">Support for a single or bulk upload.</p>
+                                                </Dragger>
                                             </div>
                                             {/** end upload-box */}
                                             <p>
@@ -407,7 +410,7 @@ const UpdateProfile = () => {
                                 </div>{" "}
                                 {/** end form-per-med-left-5 */}
                                 <Button className='p-2 text-white d-flex justify-content-center align-items-end border-0 ' onClick={handleUpload} >SAVE</Button>
-                               
+
                             </div>{" "}
                             {/** end form-per-med-box */}
                         </form>
@@ -430,7 +433,7 @@ const UpdateProfile = () => {
                             type="search"
                             placeholder="search direct messages"
                             id="message-search"
-                            onkeyup="searching()"
+                            onKeyUp="searching()"
                         />
                         <i className="fa-solid fa-magnifying-glass magnifying-glass-1"></i>
                     </div>
@@ -506,7 +509,7 @@ const UpdateProfile = () => {
                             <button
                                 className="message-button  mt-3 mb-4 col-lg-11 col-11"
                                 id="message-button"
-                                onclick="sending_newmessage()"
+                                onClick="sending_newmessage()"
                             >
                                 {" "}
                                 New Message <i className="fa-solid fa-envelope"></i>
@@ -533,3 +536,5 @@ const UpdateProfile = () => {
 };
 
 export default UpdateProfile;
+
+

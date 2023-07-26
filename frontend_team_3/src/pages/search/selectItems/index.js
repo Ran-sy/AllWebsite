@@ -5,6 +5,7 @@ import { HiOutlineUserCircle } from "react-icons/hi";
 import { IoBagRemoveSharp } from "react-icons/io5";
 import { Outlet } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+
 const Selectlist = () => {
   const navigate = useNavigate();
   return (
