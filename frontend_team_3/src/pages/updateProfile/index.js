@@ -54,14 +54,9 @@ const UpdateProfile = () => {
 
         try {
             const response = await axios.post(
-                `${Localhost}/api/v1/cv/upload/${userId}`,
-                formData,
-                {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                        Authorization: `Bearer ${token}`
-                    },
-                }
+              `${Localhost}/api/v1/cv/upload/${userId}`,
+              formData,
+              { withCredentials: true }
             );
 
             if (response.status === 200) {

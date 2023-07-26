@@ -10,23 +10,18 @@ const OpportunitiesFilter = (props) => {
     const [filterOpp, setFilterOpp] = useState([]);
     const user = useSelector(state => state.currentUser)
     const dispatch = useDispatch()
-    const config = { headers: { 'Authorization': `Bearer ${user.tokens[0]}` } }
-    console.log(user.token);
-
+ 
     useEffect(() => {
         const getOpportunities = async () => {
-            if (!user.tokens[0]) {
-                console.log('please login first')
-                dispatch(loginFailure());
-            }
+            
             await axios
-                .get(`${Localhost}/api/opp/opp`, config)
-                .then((res) => {
-                    setFilterOpp(res.data.data);
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
+              .get(`${Localhost}/api/opp/opp`, { withCredentials: true })
+              .then((res) => {
+                setFilterOpp(res.data.data);
+              })
+              .catch((error) => {
+                console.log(error);
+              });
         }
         getOpportunities()
     }, []);

@@ -12,7 +12,6 @@ import { useDispatch } from "react-redux";
 import axios from "axios";
 import { Localhost } from "../../config/api";
 import { loginFailure, loginStart, loginSuccess } from "../../features/user";
-import { Error, Success } from "../../components/Toast";
 
 export const Login = (props) => {
   const dispatch = useDispatch();
@@ -39,20 +38,17 @@ export const Login = (props) => {
           { withCredentials: true }
         );
         dispatch(loginSuccess(res.data));
-        navigate("/Profiles");
-        Success('Login succufully')
+        navigate("/");
       } catch (err) {
         dispatch(loginFailure());
-        Error('Login failed')
       }
     }
-  }
+  };
 
   const togglePassword = () => {
     if (pass !== "" && show === "Show") {
       setShow("Hide");
       setPassType("text");
-      //   console.log(show);
     } else if (show === "Hide") {
       setShow("Show");
       setPassType("password");
@@ -94,8 +90,21 @@ export const Login = (props) => {
     }
   };
 
+  // start sign in with google
+
+  const getUser = async () => {
+    try {
+      const url = `http://localhost:5000/auth/login/success`;
+      const { data } = await axios.get(url, { withCredentials: true });
+      console.log(data);
+      dispatch(loginSuccess(data));
+    } catch (err) {
+      console.log(err);
+    }
+  };
   const google = () => {
     window.open(`http://localhost:5000/auth/google/callback`, "_self");
+    getUser();
   };
 
   const github = () => {
@@ -140,7 +149,9 @@ export const Login = (props) => {
             </span>
             <FaExclamationTriangle id="error2" className="error-triangle" />
           </div>
-          <Link to={'/forgetpassword'} className="link-btn">Forgot your password ?</Link>
+          <Link to={"/forgetpassword"} className="link-btn">
+            Forgot your password ?
+          </Link>
           <button
             className="btn rounded-pill m-auto my-3 log"
             type="submit"
@@ -163,12 +174,12 @@ export const Login = (props) => {
         </div>
         <div className="switch1">
           <p style={{ fontSize: "15px" }}>Not a member yet ? </p>
-          <Link
+          <button
             className="link-btn"
-            to={"/register"}
+            onClick={() => props.onFormSwitch("register")}
           >
             click here to sign up
-          </Link>
+          </button>
         </div>
       </div>
     </div>

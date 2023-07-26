@@ -45,12 +45,7 @@ const userSchema = new mongoose.Schema({
       if (!validator.isEmail(val)) throw new Error("email is invalid");
     },
   },
-  tokens: [
-    {
-      type: String
-    }
-  ],
-
+ 
   role: {
     type: String,
     enum: ['mentee', 'mentor'],

@@ -25,10 +25,13 @@ const ContactUs = () => {
     // Fetch data from the backend using Axios
     try {
 
-      const response = await axios.post(`${Localhost}/api/email/send-email`, { formData },
+      const response = await axios.post(
+        `${Localhost}/api/email/send-email`,
+        { formData },
         {
-          headers: { 'Content-Type': 'application/json' }
-        })
+          withCredentials: true,
+        }
+      );
 
       // Process the response if needed
       console.log(response.data);

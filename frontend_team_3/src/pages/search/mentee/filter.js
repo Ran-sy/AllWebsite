@@ -11,16 +11,11 @@ const FilterMentee = (props) => {
   const [filterMentee, setFilterMentee] = useState([]);
   const user = useSelector((state) => state.currentUser);
   const dispatch = useDispatch();
-  const config = { headers: { Authorization: `Bearer ${user.tokens[0]}` } };
-
+  
   useEffect(() => {
     const getMentees = async () => {
-      if (!user.tokens[0]) {
-        console.log("please login first");
-        dispatch(loginFailure());
-      }
       await axios
-        .get(`${Localhost}/api/v1/menteeProfile`, config)
+        .get(`${Localhost}/api/v1/menteeProfile`, { withCredentials: true })
         .then((res) => {
           setFilterMentee(res.data.response);
         })

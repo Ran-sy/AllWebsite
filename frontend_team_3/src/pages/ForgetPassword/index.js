@@ -11,7 +11,13 @@ const ForgetPassword = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(`${Localhost}/api/v1/forgetPassword`, { email });
+            const response = await axios.post(
+              `${Localhost}/api/v1/forgetPassword`,
+              { email },
+              {
+                withCredentials: true,
+              }
+            );
             Success(response.data)
         } catch (error) {
             Error('The email is Error')

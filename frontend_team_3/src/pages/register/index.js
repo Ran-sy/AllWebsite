@@ -44,10 +44,14 @@ const Resgister = () => {
       const postUser = async () => {
         dispatch(loginStart());
         try {
-          const res = await axios.post(`${Localhost}/api/auth/signup`, {
-            ...payload,
-            password: password.value,
-          });
+          const res = await axios.post(
+            `${Localhost}/api/auth/signup`,
+            {
+              ...payload,
+              password: password.value,
+            },
+            { withCredentials: true }
+          );
 
           dispatch(loginSuccess(res.data));
           navigate("/login");

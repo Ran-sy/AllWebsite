@@ -23,15 +23,11 @@ const MyNavbar = () => {
   const userk = useSelector(state => state.currentUser)
 
   const logoutp = async () => {
-    if (!userk.tokens[0]) {
-      console.log('please login first')
-      dispatch(loginFailure());
-    }
-    const config = { headers: { 'Authorization': `Bearer ${userk.tokens[0]}` } }
+
     try {
-      await axios.delete(`${Localhost}/api/auth/logout`, config, {
-        withCredentials: true
-      })
+      await axios.delete(`${Localhost}/api/auth/logout`, {
+        withCredentials: true,
+      });
       dispatch(logout())
       navigate('/login')
       Success('logout Success')
