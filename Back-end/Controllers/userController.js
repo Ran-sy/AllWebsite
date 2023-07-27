@@ -68,7 +68,7 @@ const getUser = async function (req, res) {
     } catch (e) {
         res.status(400).json({e})
     }
-
+  }
 const logout = async function (req, res) {
   res
     .clearCookie("accessToken", {
