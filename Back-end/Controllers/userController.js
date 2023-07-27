@@ -63,7 +63,7 @@ const getUser = async function (req, res) {
   try {
     const user = await User.findOne({ _id: req.params.id }).populate("messages");
     const { password, tokens, ...info } = user._doc;
-    res.status(200).json({ info });
+    res.status(200).json( info );
   } catch (e) {
     res.status(400).json({ e })
   }

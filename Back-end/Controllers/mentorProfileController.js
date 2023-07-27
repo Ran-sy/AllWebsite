@@ -76,11 +76,9 @@ const getByUserId = async (req, res) => {
       path: "user dealtWith",
       select: "-tokens -password",
     });
-    console.log('mentor not exist')
 
     if (!mentor) 
       return res.status(404).send("UNABLE TO FIND Mentor");
-    console.log('mentor exist')
     res.status(200).send(mentor);
   } catch (e) {
     res.status(500).send(e.message);
