@@ -4,7 +4,7 @@ require("dotenv").config();
 const isMentor = async (req, res, next) => {
   try {
     const user = req.user;
-    console.log(user);
+   
     if (!user) throw new Error("Not a user");
     const role = req.user.role;
     console.log("what is the role? ", role);
@@ -14,7 +14,7 @@ const isMentor = async (req, res, next) => {
     res.status(500).send(e.message);
   }
 };
-
+ 
 const isMentee = async (req, res, next) => {
   try {
     const user = req.user;

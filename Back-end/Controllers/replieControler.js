@@ -16,14 +16,13 @@ const addReplie = async (req, res, next) => {
 const getReplie = async (req, res, next) => {
   try {
     const comments = await Replie.find({
-      commentId: req.params.mentorIdId,
+      mentorId: req.params.mentorId,
     });
     res.status(200).send(comments);
   } catch (e) {
     next(e);
   }
 };
-
 
 module.exports = {
   addReplie,

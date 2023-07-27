@@ -259,8 +259,6 @@ p {
     align-items: center;
 }
 
-
-
 .button3:hover {
     opacity: 1;
 }
@@ -271,8 +269,11 @@ p {
 
 #inputEmail4,
 #inputPassword4,
-#inputAddress,#inputAddress2,#exampleFormControlTextarea1 {
+#inputAddress,
+#inputAddress2,
+#exampleFormControlTextarea1 {
     border: none !important;
+    pointer-events: fill;
     border-bottom: 1px solid #FED049 !important;
 }
 
@@ -282,17 +283,20 @@ p {
 }
 
 #inputEmail4:focus,
-#inputPassword4:focus,#inputAddress:focus,#inputAddress2:focus,#exampleFormControlTextarea1:focus {
+#inputPassword4:focus,
+#inputAddress:focus,
+#inputAddress2:focus,
+#exampleFormControlTextarea1:focus {
     border: 1px solid #FED049 !important;
 }
 
 .div-button {
     display: flex;
-justify-content: flex-end;
-margin-top: 20px;
+    justify-content: flex-end;
+    margin-top: 20px;
 }
 
-@media screen and  (max-width: 720px) {
+@media screen and (max-width: 720px) {
     .div-button .button3 {
         position: relative;
         font-size: 17px;

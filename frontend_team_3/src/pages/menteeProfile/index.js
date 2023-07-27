@@ -1,3 +1,4 @@
+
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { useState } from "react";
 import { BiSolidDownArrow } from "react-icons/bi";
@@ -9,6 +10,7 @@ import axios from "axios";
 import { toast } from 'react-toastify';
 import { Localhost } from "../../config/api";
 import { loginFailure, loginStart, loginSuccess } from "../../features/user";
+import { Error, Success } from "../../components/Toast";
 
 const Mentee = ({ options, choose, setChoose }) => {
     const user = useSelector(state => state.currentUser)
@@ -26,67 +28,32 @@ const Mentee = ({ options, choose, setChoose }) => {
         skills: false,
         location: false,
     });
+     
 
     const handleSubmit = (e) => {
         e.preventDefault();
         dispatch(loginStart());
-        const addNewMentee = async () =>{
-            if(!user.tokens[0]) {
-                console.log('please login first')
-                dispatch(loginFailure());
-            }
+        const addNewMentee = async () => {
             
-            const config = {
-                headers: {
-                  'Content-Type': 'multipart/form-data',
-                  Authorization: `Bearer ${user.tokens[0]}`,
-                },
-              };
-              
-            try{
+            try {
+                await axios.post(`${Localhost}/api/v1/menteeProfile`, profile,  { withCredentials: true });
+                const userInfo = { ...user, role: 'mentor' }
+                if (file) {
+                    const formData = new FormData();
+                    formData.append('cv', file);
+                    await axios.post(`${Localhost}/api/v1/cv/upload/${user._id}`, formData,  { withCredentials: true })
 
-                await axios.post(`${Localhost}/api/v1/menteeProfile`, profile, config);
-                const userInfo = { ...user, role: 'mentor'}
+                }
                 dispatch(loginSuccess(userInfo));
-            if(file){
-                const formData = new FormData();
-                formData.append('cv', file);
-                await axios.post(`${Localhost}/api/v1/cv/upload/${user._id}`, formData, config)
-              
-            }
-            toast.success('PROFILE UPDATED SUCCESSFULLY', {
-                position: 'top-center',
-                autoClose: 3000, // Close the toast after 3 seconds
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                style: {
-                    minWidth: '200px', 
-                    maxWidth: '400px', 
-                  },
-              });
-                navigate("/edituser", {replace: true})
-            }catch(e){
+                navigate("/", { replace: true })
+                Success('PROFILE Added SUCCESSFULLY');
+            } catch (e) {
                 dispatch(loginFailure());
-                console.log('unable TO create profile: ' + e)
-                toast.error('UNABLE TO CREATE PROFILE.', {
-                    position: 'top-center',
-                    autoClose: 3000,
-                    hideProgressBar: true,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    style: {
-                        minWidth: '200px', 
-                        maxWidth: '400px', 
-                      },
-                  });
+                Error('UNABLE TO CREATE PROFILE' + e)
             }
         }
-        if(profile.location !== "" && profile.skills !== []) addNewMentee()
+        if (profile.location !== "" && profile.skills !== []) addNewMentee()
         else console.log('all info are required', profile.location, profile.skills)
-        
     };
 
     const handleFocusInput = (e) => {
@@ -123,7 +90,7 @@ const Mentee = ({ options, choose, setChoose }) => {
                                 placeholder="select type"
                                 value={choose}
                                 onChange={
-                                    e=>setChoose(e.target.value)
+                                    e => setChoose(e.target.value)
                                 }
                                 style={{ background: 'transparent' }}
                             >
@@ -140,7 +107,7 @@ const Mentee = ({ options, choose, setChoose }) => {
                                 <BiSolidDownArrow />
                             </div>
 
-                            <select className="data" 
+<select className="data" 
                             placeholder="select type" 
                             style={{ background: 'transparent' }}
                             onChange={ e=>setProfile({
@@ -160,7 +127,7 @@ const Mentee = ({ options, choose, setChoose }) => {
                                 type="file"
                                 id="upload-file"
                                 accept=".pdf"
-                                onChange={ e=>setFile(e.target.files[0]) }
+                                onChange={e => setFile(e.target.files[0])}
                             />
                             <div className="d-flex justify-content-between">
                                 {file && (
@@ -185,9 +152,9 @@ const Mentee = ({ options, choose, setChoose }) => {
                             <label className="hire">
                                 <h4 className="title-text">Available for hiring</h4>
                                 <input className="data check"
-                                 type="checkbox"
-                                 onChange={ e=> setProfile({ ...profile, availableForHiring: true})}
-                                  />
+                                    type="checkbox"
+                                    onChange={e => setProfile({ ...profile, availableForHiring: true })}
+                                />
                                 <span className="checkmark"></span>
                             </label>
                         </div>
@@ -200,7 +167,7 @@ const Mentee = ({ options, choose, setChoose }) => {
                                 onFocus={handleFocusInput}
                                 onBlur={handleBlurInput}
                                 onChange={
-                                    e=>setProfile({...profile, skills: [e.target.value]})
+                                    e => setProfile({ ...profile, skills: [e.target.value] })
                                 }
                                 placeholder={errors.skills ? "Input text" : "Skills"}
                             />
@@ -219,7 +186,7 @@ const Mentee = ({ options, choose, setChoose }) => {
                                 onFocus={handleFocusInput}
                                 onBlur={handleBlurInput}
                                 onChange={
-                                    e=> setProfile({...profile, location: e.target.value})
+                                    e => setProfile({ ...profile, location: e.target.value })
                                 }
                                 placeholder={errors.location ? "Input text" : "Location"}
                             />

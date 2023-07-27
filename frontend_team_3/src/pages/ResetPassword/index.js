@@ -4,6 +4,7 @@ import './style.css';
 import { Localhost } from '../../config/api';
 import { useParams } from 'react-router';
 import axios from 'axios';
+import { Error, Success } from '../../components/Toast';
 
 const ResetPassword = () => {
     const navigate = useNavigate();
@@ -14,11 +15,15 @@ const ResetPassword = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(`${Localhost}/api/v1/resetPassword/${id}/${token}`, { password: newPassword });
-            setMessage(response)
+            const response = await axios.post(
+              `${Localhost}/api/v1/resetPassword/${id}/${token}`,
+              { password: newPassword },
+              { withCredentials: true }
+            );
+            Success(response.data)
             navigate("/login");
         } catch (e) {
-            setMessage(e.message)
+            Error(e.message)
         }
     };
 

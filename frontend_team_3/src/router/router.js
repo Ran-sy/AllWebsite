@@ -2,15 +2,13 @@ import { Route, Routes } from "react-router-dom"
 import Wizard from "../components/mneteeProfORmentorProf"
 import MentoringOpportunities from "../components/mentorOpp/MentoringOpportunities"
 import MentoringRequest from "../components/mentorOpp/MentoringRequest"
-import Profile from "../components/userprofile/Profile"
+import Profile from "../pages/Profile/Profile"
 
 import {
     Login, Resgister, ContactUs, MentoringOpportunityForm,
     ResetPassword, Selectlist, ShowReqest, ShowOpp, SearchMentor,
     Opportunities, Requests, MentorReqForm, UpdateProfile, SearchMentee, NotFound, Home, ForgetPassword,
 } from "../pages"
-
-
 
 const Routerl = () => {
     return (
@@ -36,8 +34,8 @@ const Routerl = () => {
             <Route path="/mentoroppapp" element={<MentoringOpportunities />} />
             <Route path="/mentorreqapp" element={<MentoringRequest />} />
             <Route path="/external" element={<Profile />} />
-            <Route path='/edituser' element={<UpdateProfile />} />
-            <Route path='/*' element={<NotFound />} />
+            <Route path='/edituser/:id' element={<UpdateProfile />} />
+            <Route path='*' element={<NotFound />} />
         </Routes>
     )
 }

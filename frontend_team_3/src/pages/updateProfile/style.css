@@ -135,7 +135,6 @@ input {
     border: none;
     border-bottom: 2px solid var(--Primary);
     margin: 0 1%;
-    text-transform: capitalize;
 }
 
 label {

@@ -2,14 +2,15 @@ const mongoose = require('mongoose');
 const Profile = require("../Models/ProfileModel");
 
 // create schema
-const opportunitySchema = mongoose.Schema({
+const opportunitySchema = new mongoose.Schema({
     title: {
-        type: String, trim: true,
+        type: String,
+        trim: true,
         required: [true, "Title is required"],
-        minlength: [3, "too short title name"],
     },
     description: {
-        type: String, trim: true,
+        type: String,
+        trim: true,
         required: [true, 'Description is required'],
     },
     certificate: {
@@ -20,8 +21,12 @@ const opportunitySchema = mongoose.Schema({
         type: Number,
         required: [true, 'Duration in days required']
     },
+    time: {
+      start: { type: Date }, end: { type: Date }
+    },
     location: {
-        type: String, trim: true,
+        type: String,
+        trim: true,
         lowercase: true,
         required: [true, 'Location required']
     },
@@ -39,31 +44,32 @@ const opportunitySchema = mongoose.Schema({
     expOutcome: [{ type: String }],
     owner: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true
+        required: true,
+        ref: 'User'
     },
     progress: {
-        type: String, default: "open",
+        type: String,
+        default: "open",
         enum: ["open", "in progress", "close"],
     },
     acceptedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
     },
-    applicantIds: [{
+    applicants: [{
         type: mongoose.Schema.Types.ObjectId,
     }]
 }, { timestamp: true }
 );
 
-opportunitySchema.virtual('applicants', {
-    ref: 'User',
-    localField: 'applicantIds',
-    foreignField: '_id',
-    justOne: true
-  });
-
-opportunitySchema.methods.isBusy = function () {
+opportunitySchema.methods.checkIsClosed = function(opp){
+    if(new Date(opp.time.end) < new Date()){
+        console.log('closing opportunity ', opp.title)
+        opp.progress = 'close';
+        opp.save();
+    }
 }
 // create model
 const Opportunity = mongoose.model('opportunity', opportunitySchema);
+
 module.exports = Opportunity;

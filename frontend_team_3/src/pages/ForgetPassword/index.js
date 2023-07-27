@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './style.css';
 import { Localhost } from '../../config/api';
+import { Error, Success } from '../../components/Toast';
 
 const ForgetPassword = () => {
     const [email, setEmail] = useState('');
@@ -10,11 +11,16 @@ const ForgetPassword = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(`${Localhost}/api/v1/forgetPassword`, { email });
-            setMessage(response.data);
+            const response = await axios.post(
+              `${Localhost}/api/v1/forgetPassword`,
+              { email },
+              {
+                withCredentials: true,
+              }
+            );
+            Success(response.data)
         } catch (error) {
-            console.error('Failed to send password reset link:', error.message);
-            setMessage('Failed to send password reset link. Please try again later.');
+            Error('The email is Error')
         }
     };
 

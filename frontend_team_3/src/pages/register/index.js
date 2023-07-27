@@ -6,16 +6,16 @@ import {
   FaGoogle,
   FaExclamationTriangle,
 } from "react-icons/fa";
+
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import { loginFailure, loginStart, loginSuccess } from "../../features/user";
 import { Localhost } from "../../config/api";
-import { toast } from 'react-toastify';
-
+import { Success, Error } from "../../components/Toast";
 
 const Resgister = () => {
-  
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [emial, setEmail] = useState("");
@@ -44,10 +44,15 @@ const Resgister = () => {
       const postUser = async () => {
         dispatch(loginStart());
         try {
-          const res = await axios.post(`${Localhost}/api/auth/signup`, {
-            ...payload,
-            password: password.value,
-          });
+          const res = await axios.post(
+            `${Localhost}/api/auth/signup`,
+            {
+              ...payload,
+              password: password.value,
+            },
+            { withCredentials: true }
+          );
+
           dispatch(loginSuccess(res.data));
            // Show success toast message
           toast.success('Registration successful!', {
@@ -59,17 +64,10 @@ const Resgister = () => {
           draggable: true,
         });
           navigate("/login");
-        } catch (e) {
-           dispatch(loginFailure());
-          //  // Show error toast message
-           toast.error('Registration failed. Please try again.', {
-            position: 'top-center',
-            autoClose: 4000,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-          });
+          Success('Registered succufully')
+        } catch (err) {
+          dispatch(loginFailure());
+          Error('Registered failed')
         }
       };
       postUser();
@@ -104,8 +102,6 @@ const Resgister = () => {
     let password = document.getElementById("password");
     let email = document.getElementById("email");
     let confirmPass = document.getElementById("conf-password");
-    // console.log(email);
-    // console.log(password);
     if (name.value === "") {
       name.style.border = "thin solid #e01b24";
       document.getElementById("error3").style.display = "block";
@@ -167,20 +163,6 @@ const Resgister = () => {
     }
   };
 
-  // const handleGoogleLogin = async () => {
-  //   const provider = new GoogleAuthProvider();
-  //   const result = await signInWithPopup(auth, provider);
-  //   const user = result.user;
-  //   console.log(user);
-  //   console.log("Logged in successfully");
-  // };
-  // const handleFacebookLogin = async () => {
-  //   const provider = new FacebookAuthProvider();
-  //   const result = await signInWithPopup(auth, provider);
-  //   const user = result.user;
-  //   console.log(user);
-  //   console.log("Logged in successfully");
-  // };
   const google = () => {
     window.open(`http://localhost:5000/auth/google/callback`, "_self");
   };
@@ -222,7 +204,7 @@ const Resgister = () => {
                 type={passType}
                 placeholder="Password"
                 id="password"
-                // name="password"
+              // name="password"
               />
               <span
                 id="icon-pass-2"
@@ -254,7 +236,7 @@ const Resgister = () => {
                 type={passType2}
                 placeholder="Confirm password"
                 id="conf-password"
-                // name="conf-password"
+              // name="conf-password"
               />
               <span
                 id="icon-pass-3"

@@ -1,5 +1,5 @@
-import React, { useState,useEffect } from "react";
-import { useSelector,useDispatch } from 'react-redux';
+import React, { useState } from "react";
+import { useSelector } from 'react-redux';
 import "./style.css";
 import SidaNav2 from "../../pages/showReq/sideBar/index";
 import hero from "../../assets/images/colored_background.jpg";
@@ -12,11 +12,10 @@ import Mail from "@iconscout/react-unicons/icons/uil-fast-mail";
 import { Localhost } from '../../config/api';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
+import { toast } from 'react-toastify';
 import { Upload, Button } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
-import { toast } from 'react-toastify';
-
-
+import { useParams } from "react-router";
 const { Dragger } = Upload;
 
 // ====================================================
@@ -47,9 +46,7 @@ useEffect(() => {
       try {
         if (userRole ==="mentee"){
             const response = await axios.get('http://localhost:5000/api/v1/mentorProfile/'+`${profileId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+         withCredentials: true,
            
         });
         setData(response.data);
@@ -59,9 +56,7 @@ useEffect(() => {
         
         }else if (userRole ==="mentor"){
             const response = await axios.get('http://localhost:5000/api/v1/menteeProfile/'+`${profileId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+          withCredentials: true,
         });
         setData(response.data); 
         setEditedData(response.data); // Set initial editedData to fetched data
@@ -76,7 +71,9 @@ useEffect(() => {
     fetchData();
   }, []);
 
-////////////////////////Upload Part////////////////////////////////////
+
+    const { id } = useParams()
+    ////////////////////////Upload Part////////////////////////////////////
     const [file, setFile] = useState(null);
 
     
@@ -85,27 +82,13 @@ useEffect(() => {
       if (fileList.length > 0) {
         setFile(fileList[0].originFileObj);
       }
+
     };
-  
+
     const handleUpload = async () => {
       if (!file || !token|| !userId) {
         return;
       }
-  
-      const formData = new FormData();
-      formData.append('cv', file)
-  
-      try {
-        const response = await axios.post(
-          `${Localhost}/api/v1/cv/upload/${userId}`,
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-              Authorization: `Bearer ${token}`
-            },
-          }
-        );
   
         if (response.status === 200) {
           console.log('CV uploaded successfully');
@@ -113,9 +96,25 @@ useEffect(() => {
         } else {
           console.log('CV upload failed');
         }
-      } catch (error) {
-        console.log('Error uploading CV:', error);
-        
+
+        const formData = new FormData();
+        formData.append('cv', file)
+
+        try {
+            const response = await axios.post(
+              `${Localhost}/api/v1/cv/upload/${userId}`,
+              formData,
+              { withCredentials: true }
+            );
+
+            if (response.status === 200) {
+                console.log('CV uploaded successfully');
+                // alert(response.data)
+            } else {
+                console.log('CV upload failed');
+            }
+        } catch (error) {
+            console.log('Error uploading CV:', error);
         }
     };
     ////////////////////////END UPLOAD PART///////////////////////
@@ -414,47 +413,6 @@ useEffect(() => {
                             </div>
                             
 
-
-</div>
-{/* {editedData.expertise?.map((item, index) => (
-    <div
-      className="form-per-med-med-3 w-100 d-flex justify-content-between align-items-center"
-      key={item.id}
-    >
-      <div className="boxx w-50">
-        <input
-          type="text"
-          value={item.name || ''}
-          onChange={(e) => handleFieldChange('expertise', index, { ...item, name: e.target.value })}
-          onKeyDown={(e) => handleKeyDown(index, e, 'expertise')}
-          autoFocus
-        />
-      </div>
-      <div className="input-box d-flex w-25">
-        <input
-          type="number"
-          value={item.from || ''}
-          onChange={(e) => handleFieldChange('expertise', index, { ...item, from: parseInt(e.target.value) })}
-          onKeyDown={(e) => handleKeyDown(index, e, 'expertise')}
-        />
-      </div>
-      <div className="input-box d-flex w-25">
-        <input
-          type="number"
-          value={item.to || ''}
-          onChange={(e) => handleFieldChange('expertise', index, { ...item, to: parseInt(e.target.value) })}
-          onKeyDown={(e) => handleKeyDown(index, e, 'expertise')}
-        />
-        <div className="icon-box">
-          {/* Add any necessary icons or actions here */}
-        {/* </div>
-      </div>
-    </div>
-  ))} */} 
-                                </div>
-                                {/*  end mentor web */}
-                                 {/** end form-per-med-box-btm2 */}
-
      {/** right-lab */}
 
  {/** end form-per-med-left-2 */}
@@ -591,6 +549,7 @@ useEffect(() => {
                                             <div className="icons flex-colum d-flex flex-colum justify-content-center align-items-center my-2 ">
                                                 {/* <Arr className="ic2" /> */}
                                                 <Clud className="ic1" />
+
                                             </div>
                                             <div className="upload-box d-flex p-1 m-2 flex-colum justify-content-center align-items-center ">
                                                 {/* <Upload.Dragger className='upld-ic' >      */}
@@ -887,18 +846,19 @@ useEffect(() => {
                                             <div className="upload-box d-flex p-1 m-2 flex-colum justify-content-center align-items-center ">
                                                 {/* <Upload.Dragger className='upld-ic' >      */}
                                                 <Dragger
-        accept=".jpeg, .png , .gif , .mp4 , .ai , .psd , .word , .ppt ,.pdf"
-        className="upld-ic"
-        fileList={[]}
-        onChange={handleFileChange2}
-        beforeUpload={() => false}
-      >
-        <p className="ant-upload-drag-icon">
-          <InboxOutlined />
-        </p>
-        <p className="ant-upload-text">Click or drag file to this area to upload</p>
-        <p className="ant-upload-hint">Support for a single or bulk upload.</p>
-      </Dragger>
+                  accept=".jpeg, .png , .gif , .mp4 , .ai , .psd , .word , .ppt ,.pdf"
+                  className="upld-ic"
+                  fileList={[]}
+                  onChange={handleFileChange2}
+                  beforeUpload={() => false}
+                >
+                  <p className="ant-upload-drag-icon">
+                    <InboxOutlined />
+                  </p>
+                  <p className="ant-upload-text">Click or drag file to this area to upload</p>
+                  <p className="ant-upload-hint">Support for a single or bulk upload.</p>
+                </Dragger>
+
                                             </div>
                                             {/** end upload-box */}
                                             <p>
@@ -934,7 +894,7 @@ useEffect(() => {
                             type="search"
                             placeholder="search direct messages"
                             id="message-search"
-                            onkeyup="searching()"
+                            onKeyUp="searching()"
                         />
                         <i className="fa-solid fa-magnifying-glass magnifying-glass-1"></i>
                     </div>
@@ -1010,7 +970,7 @@ useEffect(() => {
                             <button
                                 className="message-button  mt-3 mb-4 col-lg-11 col-11"
                                 id="message-button"
-                                onclick="sending_newmessage()"
+                                onClick="sending_newmessage()"
                             >
                                 {" "}
                                 New Message <i className="fa-solid fa-envelope"></i>
@@ -1041,3 +1001,5 @@ useEffect(() => {
 
 
 export default UpdateProfile;
+
+

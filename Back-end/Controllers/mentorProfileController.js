@@ -11,17 +11,7 @@ const PostMentor = async  (req, res) => {
       avatar,
       user: req.user._id,
     });
-    mentor.updateRole(mentor);
-
-    // mentor
-    //   .save()
-    //   .then((response) => {
-    //     res.status(200).send(response);
-    //   })
-    //   .catch((error) => {
-    //     if (avatar) deleteUploadedAvatar(avatarPath)
-    //     res.status(400).send(error.message);
-    //   });
+    mentor.updateRole(mentor);  
     try {
       const newMentorProfile = await mentor.save();
       
@@ -37,9 +27,8 @@ const PostMentor = async  (req, res) => {
       if (avatar) deleteUploadedAvatar(avatarPath);
       res.status(400).send(error.message);
     }
-};
 
-////////////////////////////////////////////////////////////////////////////////////
+
 function deleteUploadedAvatar(avatarPath) {
   // avatarPath
   const filePath = avatarPath; // Specify the correct path to the avatar file
@@ -58,8 +47,6 @@ function deleteUploadedAvatar(avatarPath) {
   });
 }
 
-// Get
-
 const GetMentors = async (req, res) => {
   try {
     const mentor = await Profile.find({ lookingFor: "mentee" }).populate({
@@ -72,14 +59,12 @@ const GetMentors = async (req, res) => {
   }
 };
 
-/////////////////////////////////////////////////////////////////////////////////
-
 const getById = async (req, res) => {
   try {
     const _id = req.params.id;
-    const mentor = await Profile.findById(_id).populate({
+    const mentor = await Profile.findOne({ _id: req.params.id }).populate({
       path: "user dealtWith",
-      select: "-tokens",
+      select: "-tokens -password",
     });
     if (!mentor) {
       res.status(404).send("UNABLE TO FIND Mentor");
@@ -91,8 +76,20 @@ const getById = async (req, res) => {
   }
 };
 
-/////////////////////////////////////////////////////////////////////////////////
-// patch
+const getByUserId = async (req, res) => {
+  try {
+    const mentor = await Profile.findOne({ user: req.params.id })?.populate({
+      path: "user dealtWith",
+      select: "-tokens -password",
+    });
+
+    if (!mentor) 
+      return res.status(404).send("UNABLE TO FIND Mentor");
+    res.status(200).send(mentor);
+  } catch (e) {
+    res.status(500).send(e.message);
+  }
+};
 
 const PatchMentor = async (req, res) => {
   try {
@@ -114,8 +111,6 @@ const PatchMentor = async (req, res) => {
   }
 };
 
-//////////////////////////////////////////////////////////////////////////////////
-
 const DeleteMentor = async (req, res) => {
   try {
     const _id = req.params.id;
@@ -134,5 +129,6 @@ module.exports = {
   DeleteMentor,
   PatchMentor,
   getById,
+  getByUserId,
   GetMentors,
 };

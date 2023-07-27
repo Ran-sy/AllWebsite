@@ -206,7 +206,7 @@
 
 .more {
   text-decoration: none;
-  color: #000000;
+  color: #000;
 }
 
 .more h5 {
@@ -338,10 +338,10 @@
   background-color: #ffffff;
 }
 
-.mail-invite a {
+.mail-invite button {
   position: absolute;
   top: 20px;
-  right: 0px;
+  right: -3px;
   font-size: 18px;
   font-weight: 400;
   color: #d6d6d6;

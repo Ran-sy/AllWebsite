@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcryptjs = require("bcryptjs");
-const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer')
 require('dotenv').config()
 
@@ -31,7 +30,6 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    
     trim: true,
     minlength: 8,
     validate(val) {
@@ -47,16 +45,18 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-  
     unique: true,
     lowercase: true,
     validate(val) {
       if (!validator.isEmail(val)) throw new Error("email is invalid");
     },
   },
-  tokens:[{
-    type: String
-  }],
+  tokens: [
+    {
+      type: String
+    }
+  ],
+
   role: {
     type: String,
     enum: ['mentee', 'mentor'],
@@ -70,8 +70,6 @@ userSchema.virtual("messages", {
   foreignField: "sender",
   localField: "_id"
 })
-
-
 
 userSchema.pre("save", async function () {
   if (this.isModified("password")) {

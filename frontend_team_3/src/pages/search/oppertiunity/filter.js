@@ -1,128 +1,61 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import '../style.css'
 import { Link } from 'react-router-dom';
-
-const OpportunitiesArr = [
-    {
-        id: 1,
-        name: "Belal Swani",
-        info: ["Certificate", "Remote", "Open Duration", "Paid", "Might get hired"],
-        isCertifiacte: true,
-        Paid: true,
-        remote: true,
-        openDuartion: true,
-        Duration: 3,
-        isAvailabale: true,
-        location: "giza"
-    },
-    {
-        id: 2,
-        name: "Annette Black",
-        info: ["Certificate", "Remote", "Open Duration", "Paid", "Might get hired"],
-        isCertifiacte: true,
-        Paid: true,
-        remote: true,
-        openDuartion: true,
-        Duration: 3,
-        isAvailabale: true,
-        location: "cairo"
-    },
-    {
-        id: 3,
-        name: "Ralph Edwards",
-        info: ["Certificate", "Remote", "Open Duration", "Paid", "Might get hired"],
-        isCertifiacte: true,
-        Paid: false,
-        remote: false,
-        openDuartion: true,
-        Duration: 3,
-        isAvailabale: false,
-        location: "cairo"
-    },
-    {
-        id: 4,
-        name: "Savannah Nguyen",
-        info: ["Certificate", "Remote", "Open Duration", "Paid", "Might get hired"],
-        isCertifiacte: true,
-        Paid: true,
-        remote: true,
-        openDuartion: false,
-        Duration: 3,
-        isAvailabale: false,
-        location: "alex"
-    },
-    {
-        id: 5,
-        name: "Denis Ramsey",
-        info: ["Certificate", "Remote", "Open Duration", "Paid", "Might get hired"],
-        isCertifiacte: false,
-        Paid: true,
-        remote: false,
-        openDuartion: false,
-        Duration: 3,
-        isAvailabale: false,
-        location: "giza"
-    },
-    {
-        id: 6,
-        name: "Den Mohi",
-        info: ["Certificate", "Remote", "Open Duration", "Paid", "Might get hired"],
-        isCertifiacte: true,
-        Paid: true,
-        remote: false,
-        openDuartion: false,
-        Duration: 3,
-        isAvailabale: true,
-        location: "alex"
-    },
-    {
-        id: 7,
-        name: "Sam Sart",
-        info: ["Certificate", "Remote", "Open Duration", "Paid", "Might get hired"],
-        isCertifiacte: false,
-        Paid: false,
-        remote: true,
-        openDuartion: false,
-        Duration: 3,
-        isAvailabale: true,
-        location: "cairo"
-    }
-]
-
+import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { Localhost } from '../../../config/api';
+import { loginFailure } from '../../../features/user';
 
 const OpportunitiesFilter = (props) => {
-    let filterProductList = OpportunitiesArr.filter((mentee) => {
-        let x;
-        if (props.Certificate && props.Paid && props.Availlable) {
-            x = mentee.isCertifiacte && mentee.Paid && mentee.isAvailabale
+    const [filterOpp, setFilterOpp] = useState([]);
+    const user = useSelector(state => state.currentUser)
+    const dispatch = useDispatch()
+ 
+    useEffect(() => {
+        const getOpportunities = async () => {
+            
+            await axios
+              .get(`${Localhost}/api/opp/opp`, { withCredentials: true })
+              .then((res) => {
+                setFilterOpp(res.data.data);
+              })
+              .catch((error) => {
+                console.log(error);
+              });
         }
-        else if (props.Certificate || props.Paid || props.Availlable) {
+        getOpportunities()
+    }, []);
+    let filterOppList = filterOpp.filter((mentee) => {
+        let x;
+        if (props.Certificate && props.Paid && props.getHired) {
+            x = mentee.certificate && mentee.paid.isPaid && mentee.getHired
+        }
+        else if (props.Certificate || props.Paid || props.getHired) {
             if (props.Certificate) {
-                x = mentee.isCertifiacte
+                x = mentee.certificate
             }
             if (props.Paid) {
-                x = mentee.Paid
+                x = mentee.paid.isPaid
             }
-            if (props.Availlable) {
-                x = mentee.isAvailabale
+            if (props.getHired) {
+                x = mentee.getHired
             }
         }
         else {
             x = mentee
         }
-        return x && (mentee.remote ? mentee.remote : props.locvalue === mentee.location) && (mentee.openDuartion ? mentee.openDuartion : mentee.Duration - 1 <= props.maxValue && mentee.Duration - 1 >= props.minValue) && (props.Certifiacte ? mentee.isCertifiacte : true)
+        return (x && mentee.location === props.locvalue && (mentee.duration - 1 <= props.maxValue && mentee.duration - 1 >= props.minValue) && (props.Certifiacte ? mentee.certificate : true))
     })
-    console.log(filterProductList);
     return (
         <>
             {
-                filterProductList.map((OpportOne) => {
-                    return <div className='col-md-6 col-12 pt-4' key={OpportOne.id}>
+                filterOppList.map((OpportOne) => {
+                    return <div className='col-md-6 col-12 pt-4' key={OpportOne._id}>
                         <div className='border   rounded-3 p-3' style={{ borderColor: "#c3c3c3" }}>
                             <div className='d-flex justify justify-content-between '>
                                 <div className='info'>
                                     <h3 className='small fw-bold moblie-font' >Website UI design implementaion</h3>
-                                    <p className='small text-muted moblie-font' >Get Mentored by : <span className='fw-bold'>{OpportOne.name}</span></p>
+                                    <p className='small text-muted moblie-font' >Get Mentored by : <span className='fw-bold'>{OpportOne.title}</span></p>
                                 </div>
                                 <div className='req '>
                                     <button className=' custom-padding text-white text-respon  bg-main-color d-block border-0 small custom-padding rounded-pill'>Request</button>
@@ -130,11 +63,11 @@ const OpportunitiesFilter = (props) => {
                                 </div>
                             </div>
                             <div className='skills mt-3'>
-                                {OpportOne.isCertifiacte ? <span className='me-1 me-md-2 mt-2 d-inline-block moblie-font py-1 small px-3 rounded-pill bg-secondaryColor text-white'>Certifiacte </span> : <span className='me-1 me-md-2 mt-2 d-inline-block moblie-font py-1 small px-3 rounded-pill bg-secondaryColor text-white'>Not Certifiacte </span>}
-                                {OpportOne.remote ? <span className='me-1 me-md-2 mt-2 d-inline-block moblie-font py-1 small px-3 rounded-pill bg-secondaryColor text-white'>Remote</span> : <span className='me-1 me-md-2 mt-2 d-inline-block moblie-font py-1 small px-3 rounded-pill bg-secondaryColor text-white'>{OpportOne.location}</span>}
-                                {OpportOne.openDuartion ? <span className='me-1 me-md-2 mt-2 d-inline-block moblie-font py-1 small px-3 rounded-pill bg-secondaryColor text-white'>open Duartion</span> : <span className='me-1 me-md-2 mt-2 d-inline-block moblie-font py-1 small px-3 rounded-pill bg-secondaryColor text-white'>{OpportOne.Duration} Months</span>}
-                                {OpportOne.Paid ? <span className='me-1 me-md-2 mt-2 d-inline-block moblie-font py-1 small px-3 rounded-pill bg-secondaryColor text-white'>Paid</span> : <span className='me-1 me-md-2 mt-2 d-inline-block moblie-font py-1 small px-3 rounded-pill bg-secondaryColor text-white'>Not Paid</span>}
-                                {OpportOne.isAvailabale ? <span className='me-1 me-md-2 mt-2 d-inline-block moblie-font py-1 small px-3 rounded-pill bg-secondaryColor text-white'>Might get hired</span> : <span className='me-1 me-md-2 mt-2 d-inline-block moblie-font py-1 small px-3 rounded-pill bg-secondaryColor text-white'>Not Availlable For Hiring</span>}
+                                {OpportOne.certificate ? <span className='me-1 me-md-2 mt-2 d-inline-block moblie-font py-1 small px-3 rounded-pill bg-secondaryColor text-white'>Certifiacte </span> : <span className='me-1 me-md-2 mt-2 d-inline-block moblie-font py-1 small px-3 rounded-pill bg-secondaryColor text-white'>Not Certifiacte </span>}
+                                <span className='me-1 me-md-2 mt-2 d-inline-block moblie-font py-1 small px-3 rounded-pill bg-secondaryColor text-white'>{OpportOne.location}</span>
+                                <span className='me-1 me-md-2 mt-2 d-inline-block moblie-font py-1 small px-3 rounded-pill bg-secondaryColor text-white'>{OpportOne.duration} Months</span>
+                                {OpportOne.paid.isPaid ? <span className='me-1 me-md-2 mt-2 d-inline-block moblie-font py-1 small px-3 rounded-pill bg-secondaryColor text-white'>Paid</span> : <span className='me-1 me-md-2 mt-2 d-inline-block moblie-font py-1 small px-3 rounded-pill bg-secondaryColor text-white'>Not Paid</span>}
+                                {OpportOne.getHired ? <span className='me-1 me-md-2 mt-2 d-inline-block moblie-font py-1 small px-3 rounded-pill bg-secondaryColor text-white'>Might get hired</span> : <span className='me-1 me-md-2 mt-2 d-inline-block moblie-font py-1 small px-3 rounded-pill bg-secondaryColor text-white'>Not Availlable For Hiring</span>}
 
                             </div>
                             <div className='mt-4 small'>

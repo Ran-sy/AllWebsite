@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import './style.css'
 import Form from "react-bootstrap/Form";
 import { Accordion, Badge, Button, Stack } from "react-bootstrap";
@@ -12,10 +12,42 @@ import RequestsFilter from "../../components/homepage/RequestsFilters";
 import Search from "./search/Search";
 import MentorInLocation from "../../components/homepage/MentorLocation";
 import { Link } from "react-router-dom";
+import { Localhost } from "../../config/api";
+import { useDispatch } from "react-redux";
+import axios from "axios";
+import { loginFailure, loginStart, loginSuccess } from "../../features/user";
 
-
-
-function Home({ data }) {
+const Home = () => {
+  const [input, setInput] = useState('')
+  const [message, setMessage] = useState('')
+const dispatch = useDispatch();
+  const handleClick = async () => {
+    try {
+      const response = await axios.post(
+        `${Localhost}/api/v1/subscribe`,
+        { email: input },
+        {
+          withCredentials: true,
+        }
+      );
+      setMessage(response.data);
+    } catch (error) {
+      setMessage('Failed to send email initaivion');
+    }
+  }
+  const getUser = async () => {
+    try {
+      const url = `http://localhost:5000/auth/login/success`;
+      const { data } = await axios.get(url, { withCredentials: true });
+      console.log(data);
+      dispatch(loginSuccess(data));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  useEffect(() => {
+    getUser();
+  });
 
   return (
     <>
@@ -135,9 +167,12 @@ function Home({ data }) {
                     <div className="mail-invite">
                       <Form.Control
                         type="memaila"
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
                         placeholder="Email Address"
                       />
-                      <a href="">Invite</a>
+                      <button onClick={handleClick}>Invite</button>
+                      {message && <p>{message}</p>}
                     </div>
                   </div>
                 </Col>

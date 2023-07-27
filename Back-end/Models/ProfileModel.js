@@ -14,6 +14,18 @@ const ProfileSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    university: {
+      type: String,
+      trim: true,
+    },
+    phone: {
+      type: String, 
+      trim: true
+    },
+    about: [{
+      type: String,
+      trim: true,
+    }],
     location: {
       type: String,
       trim: true,
@@ -31,9 +43,9 @@ const ProfileSchema = new mongoose.Schema(
       type: Number,
     },
     expertise: [{
-      name: {type: String, trim: true},
-      from: {type: Number, max: 2024, min: 1900},
-      to: {type: Number, max: 2024, min: 1900},
+      name: { type: String, trim: true },
+      from: { type: Number, max: 2024, min: 1900 },
+      to: { type: Number, max: 2024, min: 1900 },
     }],
     currentCompany: {
       type: String,
@@ -50,11 +62,11 @@ const ProfileSchema = new mongoose.Schema(
       required: true,
     },
     dealtWith: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     }],
     busyDays: [{
-      from: {type: Date}, to: {type: Date}
+      from: { type: Date }, to: { type: Date }
     }]
   },
   { timestamps: true }

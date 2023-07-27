@@ -1,25 +1,25 @@
 const jwt = require("jsonwebtoken");
+require('dotenv').config()
 const User = require("../Models/userModel");
-require("dotenv").config();
+const createError = require("../utils/createError");
 
-const auth =  async(req, res, next) => {
+const auth = (req, res, next) => {
   try{
-    authHeader = req.header('authorization') || req.header('Authorization')
-    const token = authHeader.replace("Bearer ", "").trim();
-    console.log(`token:${token}`);
+    const token = req.cookies?.accessToken;
     if (!token) return next(createError(401, "You are not authenticated!"));
 
-    const tokenVerify = jwt.verify(token, process.env.SECRET_KEY);
-    const user = await User.findOne({
-    _id: tokenVerify.id.toString()});
-    if (!user) {
-    throw new Error("Please login first");
-    }
-    req.user = user;
-    req.token = token;
-    next();
+    jwt.verify(token, process.env.SECRET_KEY, async (err, obj) => {
+      if (err) return next(createError(403, "Token is not valid!"));
+
+      const user = await User.findById(obj.id)
+      if(!user) return next(createError(404, "Token is not valid!"));
+      req.user = user;
+      req.token = token
+      next();
+    });
   } catch (error) {
-  res.status(401).send(error.message);
-}
+    res.status(401).send(error.message);
+  }
 };
+
 module.exports = auth;
