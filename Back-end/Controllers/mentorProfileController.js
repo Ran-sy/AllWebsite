@@ -1,7 +1,8 @@
-const Profile = require("../Models/profileModel");
+const Profile = require("../Models/ProfileModel");
+const User = require("../Models/userModel")
 const fs = require('fs');
 
-const PostMentor =  (req, res) => {
+const PostMentor = async  (req, res) => {
     let avatar = req.file ? req.file.fieldname : ""
     const avatarPath = req.file ? req.file.path : "";
     let mentor = new Profile({
@@ -12,15 +13,30 @@ const PostMentor =  (req, res) => {
     });
     mentor.updateRole(mentor);
 
-    mentor
-      .save()
-      .then((response) => {
-        res.status(200).send(response);
-      })
-      .catch((error) => {
-        if (avatar) deleteUploadedAvatar(avatarPath)
-        res.status(400).send(error.message);
-      });
+    // mentor
+    //   .save()
+    //   .then((response) => {
+    //     res.status(200).send(response);
+    //   })
+    //   .catch((error) => {
+    //     if (avatar) deleteUploadedAvatar(avatarPath)
+    //     res.status(400).send(error.message);
+    //   });
+    try {
+      const newMentorProfile = await mentor.save();
+      
+      // Update the user document with the newly created profile's ID
+      const user = await User.findByIdAndUpdate(
+        req.user._id,
+        { profile: newMentorProfile._id }, 
+        { new: true }
+      );
+  
+      res.status(200).send(newMentorProfile);
+    } catch (error) {
+      if (avatar) deleteUploadedAvatar(avatarPath);
+      res.status(400).send(error.message);
+    }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////

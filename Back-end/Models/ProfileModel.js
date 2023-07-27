@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const User = require("./userModel");
 
+
 const ProfileSchema = new mongoose.Schema(
   {
     lookingFor: {
@@ -24,6 +25,7 @@ const ProfileSchema = new mongoose.Schema(
     },
     avatar: {
       type: String,
+      default:"../uploads/avatar_1689333300642.jpg"
     },
     yearsOfExperence: {
       type: Number,
@@ -47,7 +49,6 @@ const ProfileSchema = new mongoose.Schema(
       unique: true,
       required: true,
     },
-   
     dealtWith: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",

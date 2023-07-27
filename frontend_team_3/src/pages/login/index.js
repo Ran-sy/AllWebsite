@@ -1,5 +1,6 @@
 import "./style.css";
 import { React, useState } from "react";
+import { toast } from 'react-toastify';
 import {
   FaFacebookF,
   FaLinkedinIn,
@@ -40,9 +41,34 @@ export const Login = (props) => {
           );
           console.log(email.value);
           dispatch(loginSuccess(res.data));
-          navigate("/");
+          
+           toast.success('Login successful! Welcome Back', {
+            position: 'top-center',
+            autoClose: 3000, // Close the toast after 3 seconds
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            style: {
+              minWidth: '200px', 
+              maxWidth: '400px', 
+            },
+          });
+          navigate("/Profiles");
         } catch (err) {
           dispatch(loginFailure());
+          toast.error('Login failed. Please  try again.', {
+            position: 'top-center',
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            style: {
+              minWidth: '200px', // Set the minimum width for the toast box
+              maxWidth: '400px', // Set the maximum width for the toast box
+            },
+          });
         }
       }
   }

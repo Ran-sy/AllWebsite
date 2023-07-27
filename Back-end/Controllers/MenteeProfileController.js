@@ -1,4 +1,5 @@
-const Profile = require("../Models/profileModel");
+const Profile = require("../Models/ProfileModel");
+const User = require("../Models/userModel")
 const fs = require("fs");
 
 //show the list of mentorInfo
@@ -16,7 +17,7 @@ const getAllMentee = (req, res, next) => {
 //////////////////////////////////////////////////////
 
 // add new mentor
-const addNewMentee = (req, res, next) => {
+const addNewMentee = async (req, res, next) => {
   let avatar = req.file ? req.file.fieldname : "";
   const avatarPath = req.file ? req.file.path : "";
   let mentee = new Profile({
@@ -27,17 +28,34 @@ const addNewMentee = (req, res, next) => {
   });
   mentee.updateRole(mentee);
 
-  mentee
-    .save()
-    .then((response) => {
-      res.status(200).send(response);
-    })
-    .catch((error) => {
-      res.status(400).send(error.message);
-      if (avatar) {
-        deleteUploadedAvatar(avatarPath);
-      }
-    });
+  // mentee
+  //   .save()
+  //   .then((response) => {
+  //     res.status(200).send(response);
+  //   })
+  //   .catch((error) => {
+  //     res.status(400).send(error.message);
+  //     if (avatar) {
+  //       deleteUploadedAvatar(avatarPath);
+  //     }
+  //   });
+  try {
+    const newMenteeProfile = await mentee.save();
+
+    // Update the user document with the newly created profile's ID
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { profile: newMenteeProfile._id }, // Assuming the user model has a field named "profile" to store the profile ID
+      { new: true }
+    );
+
+    res.status(200).send(newMenteeProfile);
+  } catch (error) {
+    res.status(400).send(error.message);
+    if (avatar) {
+      deleteUploadedAvatar(avatarPath);
+    }
+  }
 };
 
 ///////////////////////////////////////////////

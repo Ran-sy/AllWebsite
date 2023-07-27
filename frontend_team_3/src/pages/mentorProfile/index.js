@@ -6,6 +6,7 @@ import { BiError } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
+import { toast } from 'react-toastify';
 import { Localhost } from "../../config/api";
 import { loginFailure, loginStart, loginSuccess } from "../../features/user";
 
@@ -37,17 +38,52 @@ const Mentor = ({ options, choose, setChoose }) => {
                 console.log('please login first')
                 dispatch(loginFailure());
             }
-            const config ={headers: {'Authorization': `Bearer ${user.tokens[0]}`}}
+            // const config ={headers: {'Authorization': `Bearer ${user.tokens[0]}`}}
+            const config = {
+                headers: {
+                  'Content-Type': 'multipart/form-data',
+                  Authorization: `Bearer ${user.tokens[0]}`,
+                },
+              };
             try{
                 await axios.post(`${Localhost}/api/v1/mentorProfile`, profile, config)
                 const userInfo = { ...user, role: 'mentee' }
                 dispatch(loginSuccess(userInfo));
             if(file)
-                await axios.post(`${Localhost}/api/v1/cv/upload/${user.id}`, file, config)
-                navigate("/", {replace: true})
+            {
+                const formData = new FormData();
+                formData.append('cv', file);
+                await axios.post(`${Localhost}/api/v1/cv/upload/${user._id}`, formData, config)
+              
+            }
+            toast.success('PROFILE UPDATED SUCCESSFULLY', {
+                position: 'top-center',
+                autoClose: 4000, // Close the toast after 3 seconds
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                style: {
+                    minWidth: '200px', 
+                    maxWidth: '400px', 
+                  },
+              });
+                navigate("/edituser", {replace: true})
             }catch(e){
                 dispatch(loginFailure());
-                console.log('unable create prfile: ' + e)
+                toast.error('UNABLE TO CREATE PROFILE.', {
+                    position: 'top-center',
+                    autoClose: 4000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    style: {
+                        minWidth: '200px', 
+                        maxWidth: '400px', 
+                      },
+                  });
+                console.log('unable create profile: ' + e)
             }
             
         }

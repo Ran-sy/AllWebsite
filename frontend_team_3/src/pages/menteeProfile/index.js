@@ -6,6 +6,7 @@ import { BiError } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
+import { toast } from 'react-toastify';
 import { Localhost } from "../../config/api";
 import { loginFailure, loginStart, loginSuccess } from "../../features/user";
 
@@ -53,10 +54,34 @@ const Mentee = ({ options, choose, setChoose }) => {
                 await axios.post(`${Localhost}/api/v1/cv/upload/${user._id}`, formData, config)
               
             }
-                navigate("/", {replace: true})
+            toast.success('PROFILE UPDATED SUCCESSFULLY', {
+                position: 'top-center',
+                autoClose: 3000, // Close the toast after 3 seconds
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                style: {
+                    minWidth: '200px', 
+                    maxWidth: '400px', 
+                  },
+              });
+                navigate("/edituser", {replace: true})
             }catch(e){
                 dispatch(loginFailure());
-                console.log('unable create prfile: ' + e)
+                console.log('unable TO create profile: ' + e)
+                toast.error('UNABLE TO CREATE PROFILE.', {
+                    position: 'top-center',
+                    autoClose: 3000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    style: {
+                        minWidth: '200px', 
+                        maxWidth: '400px', 
+                      },
+                  });
             }
         }
         if(profile.location !== "" && profile.skills !== []) addNewMentee()
@@ -121,7 +146,7 @@ const Mentee = ({ options, choose, setChoose }) => {
                             onChange={ e=>setProfile({
                                 ...profile, designation: e.target.value
                             }) } >
-                                <option className="choose2">Computer scince</option>
+                                <option className="choose2">Computer science</option>
                                 <option className="choose1">Engineering</option>
                                 <option className="choose2">Artificial Intelligence</option>
                                 <option className="choose2">Computer programming</option>

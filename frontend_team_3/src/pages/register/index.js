@@ -11,6 +11,8 @@ import { useDispatch } from "react-redux";
 import axios from "axios";
 import { loginFailure, loginStart, loginSuccess } from "../../features/user";
 import { Localhost } from "../../config/api";
+import { toast } from 'react-toastify';
+
 
 const Resgister = () => {
   
@@ -47,9 +49,27 @@ const Resgister = () => {
             password: password.value,
           });
           dispatch(loginSuccess(res.data));
+           // Show success toast message
+          toast.success('Registration successful!', {
+          position: 'top-center',
+          autoClose: 4000, // Close the toast after 3 seconds
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
           navigate("/login");
         } catch (e) {
            dispatch(loginFailure());
+          //  // Show error toast message
+           toast.error('Registration failed. Please try again.', {
+            position: 'top-center',
+            autoClose: 4000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
         }
       };
       postUser();
