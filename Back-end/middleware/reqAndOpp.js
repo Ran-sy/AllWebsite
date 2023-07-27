@@ -2,14 +2,12 @@
 require("dotenv").config();
 
 const isMentor = async (req, res, next) => {
-    
-
   try {
     const user = req.user;
    
-   if (!user) throw new Error("Not a user");
+    if (!user) throw new Error("Not a user");
     const role = req.user.role;
-    console.log("what is the role? ", req.user);
+    console.log("what is the role? ", role);
     if (role === "mentor") next(); // if mentor next()
     else throw new Error("You need to be a mentor ");
   } catch (e) {
@@ -20,7 +18,6 @@ const isMentor = async (req, res, next) => {
 const isMentee = async (req, res, next) => {
   try {
     const user = req.user;
-    console.log(user);
     if (!user) throw new Error("Not a user");
     const role = req.user.role;
     console.log("what is the role? ", role);

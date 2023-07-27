@@ -45,7 +45,12 @@ const userSchema = new mongoose.Schema({
       if (!validator.isEmail(val)) throw new Error("email is invalid");
     },
   },
- 
+  tokens: [
+    {
+      type: String
+    }
+  ],
+
   role: {
     type: String,
     enum: ['mentee', 'mentor'],
@@ -58,7 +63,6 @@ userSchema.virtual("messages", {
   foreignField: "sender",
   localField: "_id"
 })
-
 
 userSchema.pre("save", async function () {
   if (this.isModified("password")) {

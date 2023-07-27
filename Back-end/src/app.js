@@ -21,6 +21,7 @@ const socialLoginRouter = require("../Routes/SocialAuthRouter");
 const newsletterRouter = require("../Routes/newsletterRouter");
 const passwordRouter = require("../Routes/passwordRouter");
 const acceptingRouter = require("../Routes/acceptingRouter");
+const applicantRouter = require('../Routes/addApplicantRouter')
 const { logger } = require("../middleware/reglogger");
 const errorHandle = require("../middleware/errorLogger");
 const corsOptions = require("../config/corsOptions");
@@ -41,6 +42,7 @@ app.use(
     origin: "http://localhost:3000",
 
     credentials: true, // some legacy browsers (IE11, various SmartTVs) choke on 204
+    exposedHeader: ['set-cookie']
   })
 );
 app.use(function (req, res, next) {
@@ -73,6 +75,7 @@ app.use("/api/v1", newsletterRouter);
 app.use("/api/auth", userRouter);
 app.use("/api/v1", mentorRouter);
 app.use("/api/auth", acceptingRouter);
+app.use('/api/auth', applicantRouter);
 app.use("/api/opp", opportunityRouter);
 app.use("/api/req", requestRounter);
 app.use("/api/email", mailRouter);
