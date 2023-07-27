@@ -1,7 +1,6 @@
 const Profile = require("../Models/profileModel");
 const fs = require("fs");
 
-//show the list of mentorInfo
 const getAllMentee = (req, res, next) => {
   Profile.find({ lookingFor: "mentor" })
     .populate({ path: "user dealtWith", select: "-tokens" })
@@ -13,9 +12,6 @@ const getAllMentee = (req, res, next) => {
     });
 };
 
-//////////////////////////////////////////////////////
-
-// add new mentor
 const addNewMentee = (req, res, next) => {
   let avatar = req.file ? req.file.fieldname : "";
   const avatarPath = req.file ? req.file.path : "";
@@ -26,6 +22,7 @@ const addNewMentee = (req, res, next) => {
     user: req.user._id,
   });
   mentee.updateRole(mentee);
+
   mentee
     .save()
     .then((response) => {
@@ -39,9 +36,7 @@ const addNewMentee = (req, res, next) => {
     });
 };
 
-///////////////////////////////////////////////
-//////Delete avatar in case the profile failed of saving
-
+//Delete avatar in case the profile failed of saving
 function deleteUploadedAvatar(avatarPath) {
   // avatarPath
   const filePath = avatarPath; // Specify the correct path to the avatar file
@@ -60,13 +55,10 @@ function deleteUploadedAvatar(avatarPath) {
   });
 }
 
-////////////////////////////////////////
-
-//get mentor by id
 const getMentee = async (req, res, next) => {
   const _id = req.params.id;
   Profile.findById(_id)
-    .populate('user dealtWith')
+    .populate({ path: "user dealtWith", select: "-tokens -password" })
     .then((mentee) => {
       if (!mentee) {
         return res.status(404).send("mentee not found");
@@ -78,7 +70,21 @@ const getMentee = async (req, res, next) => {
     });
 };
 
-// update mentor
+const getMenteeByUser = async (req, res, next) => {
+  const _id = req.params.id;
+  Profile.findOne({user: _id})
+    .populate({ path: "user dealtWith", select: "-tokens -password" })
+    .then((mentee) => {
+      if (!mentee) {
+        return res.status(404).send("mentee not found");
+      }
+      res.status(200).send(mentee);
+    })
+    .catch((e) => {
+      res.status(500).send(e.message);
+    });
+};
+
 const updateMentee = async (req, res, next) => {
   try {
     const menteeId = req.params.id;
@@ -107,7 +113,6 @@ const updateMentee = async (req, res, next) => {
   }
 };
 
-// delete mentor
 const removeMentee = async (req, res, next) => {
   try {
     const id = req.params.id;
@@ -125,6 +130,7 @@ module.exports = {
   addNewMentee,
   getAllMentee,
   getMentee,
+  getMenteeByUser,
   updateMentee,
   removeMentee,
 };

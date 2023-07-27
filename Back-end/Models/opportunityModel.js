@@ -6,7 +6,6 @@ const opportunitySchema = new mongoose.Schema({
         type: String,
         trim: true,
         required: [true, "Title is required"],
-        minlength: [3, "too short title name"],
     },
     description: {
         type: String,
@@ -20,6 +19,9 @@ const opportunitySchema = new mongoose.Schema({
     duration: {
         type: Number,
         required: [true, 'Duration in days required']
+    },
+    time: {
+      start: { type: Date }, end: { type: Date }
     },
     location: {
         type: String,
@@ -53,19 +55,20 @@ const opportunitySchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
     },
-    applicantIds: [{
+    applicants: [{
         type: mongoose.Schema.Types.ObjectId,
     }]
 }, { timestamp: true }
-)
+);
 
-opportunitySchema.virtual('applicants', {
-    ref: 'User',
-    localField: 'applicantIds',
-    foreignField: '_id',
-    justOne: true
-});
-
+opportunitySchema.methods.checkIsClosed = function(opp){
+    if(new Date(opp.time.end) < new Date()){
+        console.log('closing opportunity ', opp.title)
+        opp.progress = 'close';
+        opp.save();
+    }
+}
 // create model
-const Opportunity = mongoose.model("Opportunity", opportunitySchema);
+const Opportunity = mongoose.model('opportunity', opportunitySchema);
+
 module.exports = Opportunity;

@@ -13,6 +13,18 @@ const ProfileSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    university: {
+      type: String,
+      trim: true,
+    },
+    phone: {
+      type: String, 
+      trim: true
+    },
+    about: [{
+      type: String,
+      trim: true,
+    }],
     location: {
       type: String,
       trim: true,
@@ -59,7 +71,6 @@ const ProfileSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-
 ProfileSchema.methods.updateRole = async function (mentor) {
   try {
     await User.findByIdAndUpdate(
@@ -76,4 +87,5 @@ ProfileSchema.methods.updateRole = async function (mentor) {
 }
 
 const Profile = mongoose.model("Profile", ProfileSchema);
+
 module.exports = Profile;

@@ -3,6 +3,8 @@ const createError = require("../utils/createError")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 require("dotenv").config();
+
+
 const register = async function (req, res, next) {
   try {
     if (!req.body.name || !req.body.email || !req.body.password) {
@@ -39,11 +41,12 @@ const login = async function (req, res, next) {
 
     const token = jwt.sign(
       {
-        id: user._id,
-        role:user.role
-      },
-      "secretKey"
+        id: user._id.toString()
+      }, process.env.SECRET_KEY
     );
+    user.tokens = user.tokens.concat(token)
+    await user.save()
+
     const { password, ...info } = user._doc;
     res
       .cookie("accessToken", token, {
@@ -59,7 +62,8 @@ const login = async function (req, res, next) {
 const getUser = async function (req, res) {
   try {
     const user = await User.findOne({ _id: req.params.id }).populate("messages");
-    res.status(200).json({ user });
+    const { password, tokens, ...info } = user._doc;
+    res.status(200).json( info );
   } catch (e) {
     res.status(400).json({ e })
   }

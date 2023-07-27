@@ -38,7 +38,7 @@ export const Login = (props) => {
           { withCredentials: true }
         );
         dispatch(loginSuccess(res.data));
-        navigate("/");
+        navigate("/", {replace: true});
       } catch (err) {
         dispatch(loginFailure());
       }
