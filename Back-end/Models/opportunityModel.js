@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Profile = require("../Models/ProfileModel");
 
 // create schema
 const opportunitySchema = new mongoose.Schema({

@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react';
+import {useSelector} from 'react-redux';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
@@ -15,7 +16,6 @@ import { Localhost } from '../../../config/api';
 import { useDispatch, useSelector } from 'react-redux';
 import { Error, Success } from '../../Toast';
 import { loginFailure, logout } from '../../../features/user';
-
 
 const MyNavbar = () => {
   const dispatch = useDispatch()
@@ -37,6 +37,12 @@ const MyNavbar = () => {
   }
 
   const [isClick, setIsClick] = useState(false)
+  const [data, setProfileData] = useState(null);
+  const user1 = useSelector(state => state.currentUser);
+  const profileId = user1.profile;
+ 
+  console.log(user1.profile, user1.tokens[0],user1)
+  
   const user = {
     id: 1,
     username: "balqees saber",
@@ -45,6 +51,39 @@ const MyNavbar = () => {
     isActive: true,
     userType: 'mentee'
   };
+  useEffect(() => {
+    // Make an API call to fetch the profile information using the profileId
+    // Replace 'fetchProfileById' with the actual function that fetches the profile data
+    const fetchProfileById = async () => {
+      try {
+        if(user1.role==="mentee"){
+
+          const response = await axios.get('http://localhost:5000/api/v1/mentorProfile/'+`${profileId}`, {
+            headers: {
+              Authorization: `Bearer ${user1.tokens[0]}`}})
+       
+           
+           setProfileData(response.data); // Update the state with the fetched profile data
+      } 
+      else if(user1.role==="mentor"){
+        const response = await axios.get('http://localhost:5000/api/v1/menteeProfile/'+`${profileId}`, {
+          headers: {
+            Authorization: `Bearer ${user1.tokens[0]}`}});
+           
+        setProfileData(response.data); // Update the state with the fetched profile data
+
+      }}catch (error) {
+            console.error(error);
+          }
+        
+    };
+   
+      fetchProfileById(); // Fetch profile data if the profileId is available
+      
+     },[]);
+     
+     console.log(data)
+  
   return (
     <Navbar expand="lg" bg='white'>
       <Container>
@@ -104,17 +143,20 @@ const MyNavbar = () => {
                         <div className='d-flex align-items-center '>
                           <img src={user.img} alt='user-img' className="rounded-circle me-3" width={60} height={60} />
                           <p className='align-self-center fw-bold text-capitalize text-start'>
-                            <span className='d-block text-white'>{user.username}</span>
-                            <span className='d-block text-white'>{user.job_title}</span>
+                            {/* <span className='d-block text-white'>{user.username}</span> */}
+                            <span className='d-block text-white'>{user1.name}</span>
+                            <span className='d-block text-white'>{data.designation}</span>
+                            <span className='d-block text-white'>{user1.role}</span>
                           </p>
                         </div>
-                        <Link to="/profile" className="nav-link btn d-block py-2 px-4 rounded-pill  mt-3 mx-auto text-white fw-bold text-capitalize btnUser" > view profile</Link>
+                        <Link to="/edituser" className="nav-link btn d-block py-2 px-4 rounded-pill  mt-3 mx-auto text-white fw-bold text-capitalize btnUser" > view profile</Link>
                       </li>
                       <li className="nav-item text-start d-lg-none">
-                        <Link to="/edit-profile" className="nav-link text-light text-capitalize fw-bold" >edit profile</Link>
+                        <Link to="/edituser" className="nav-link text-light text-capitalize fw-bold" >edit profile</Link>
                       </li>
                       {/* if user type mentee show some links , is not show others links */}
-                      {user.userType === "mentee" ? (
+                      {/* {user.userType === "mentee" ? ( */}
+                        {user1.role === "mentee" ? (
                         <>
                           <li className="nav-item text-start d-lg-none">
                             <Link to="/my-requests" className="nav-link text-light text-capitalize fw-bold" >my requests</Link>

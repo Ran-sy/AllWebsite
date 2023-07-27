@@ -10,6 +10,12 @@ const userSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  profile: {
+    type: mongoose.Types.ObjectId,
+    ref: "Profile",
+    unique: true,
+    
+  },
   googleId: {
     type: String,
   },
@@ -55,7 +61,8 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['mentee', 'mentor'],
     default: 'mentee'
-  }
+  },
+ 
 });
 
 userSchema.virtual("messages", {

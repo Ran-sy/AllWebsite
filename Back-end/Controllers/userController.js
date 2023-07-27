@@ -60,14 +60,14 @@ const login = async function (req, res, next) {
 };
 
 const getUser = async function (req, res) {
-  try {
-    const user = await User.findOne({ _id: req.params.id }).populate("messages");
-    const { password, tokens, ...info } = user._doc;
-    res.status(200).json( info );
-  } catch (e) {
-    res.status(400).json({ e })
-  }
-};
+    try {
+        const user = await User.findOne({ _id: req.params.id })
+        .populate("messages profile");
+      
+        res.status(200).json({user});
+    } catch (e) {
+        res.status(400).json({e})
+    }
 
 const logout = async function (req, res) {
   res
@@ -78,7 +78,6 @@ const logout = async function (req, res) {
     .status(200)
     .send("User has been logged out.")
 }
-
 
 const logoutAll = async function (req, res) {
   try {

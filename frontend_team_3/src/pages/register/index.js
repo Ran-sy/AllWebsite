@@ -54,6 +54,15 @@ const Resgister = () => {
           );
 
           dispatch(loginSuccess(res.data));
+           // Show success toast message
+          toast.success('Registration successful!', {
+          position: 'top-center',
+          autoClose: 4000, // Close the toast after 3 seconds
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
           navigate("/login");
           Success('Registered succufully')
         } catch (err) {

@@ -1,7 +1,7 @@
 const { Request } = require("../Models/mentorRequestModel");
 const Opportunity = require("../Models/opportunityModel");
-const Profile = require("../Models/profileModel");
-
+const Profile = require("../Models/ProfileModel");
+ 
 const acceptRequest = async (req, res) => {
   try {
     // owner: mentee => applicatns: mentors => reqId: id, mentor: acceptedUser

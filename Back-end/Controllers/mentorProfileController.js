@@ -1,27 +1,33 @@
-const Profile = require("../Models/profileModel");
+const Profile = require("../Models/ProfileModel");
+const User = require("../Models/userModel")
 const fs = require('fs');
 
-const PostMentor = async (req, res) => {
- let avatar = req.file ? req.file.fieldname : ""
- const avatarPath = req.file ? req.file.path : "";
- try{
-  let mentor = new Profile({
-    ...req.body,
-    lookingFor: req.body.lookingFor ? req.body.lookingFor : "mentee",
-    avatar,
-    user: req.user._id,
-  });
-  mentor.updateRole(mentor);
-
-  await mentor.save()
-  res.status(200).send(mentor);
+const PostMentor = async  (req, res) => {
+    let avatar = req.file ? req.file.fieldname : ""
+    const avatarPath = req.file ? req.file.path : "";
+    let mentor = new Profile({
+      ...req.body,
+      lookingFor: req.body.lookingFor? req.body.lookingFor: "mentee",
+      avatar,
+      user: req.user._id,
+    });
+    mentor.updateRole(mentor);  
+    try {
+      const newMentorProfile = await mentor.save();
       
- }catch(e){
-  console.log(e.message)
-  if (avatar) deleteUploadedAvatar(avatarPath)
-  res.status(400).send(e.message)
- }
-};
+      // Update the user document with the newly created profile's ID
+      const user = await User.findByIdAndUpdate(
+        req.user._id,
+        { profile: newMentorProfile._id }, 
+        { new: true }
+      );
+  
+      res.status(200).send(newMentorProfile);
+    } catch (error) {
+      if (avatar) deleteUploadedAvatar(avatarPath);
+      res.status(400).send(error.message);
+    }
+
 
 function deleteUploadedAvatar(avatarPath) {
   // avatarPath

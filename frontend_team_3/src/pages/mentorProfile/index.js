@@ -847,7 +847,6 @@ const Mentor = ({ options, choose, setChoose }) => {
         e.preventDefault();
         dispatch(loginStart());
         const addNewMentor = async () => {
-           
             try {
                 await axios.post(`${Localhost}/api/v1/mentorProfile`, profile, { withCredentials: true })
                 const userInfo = { ...user, role: 'mentee' }
