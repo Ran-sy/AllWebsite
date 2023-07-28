@@ -33,7 +33,7 @@ const Routerl = () => {
             <Route path="/PostOpp" element={<MentoringOpportunityForm />} />
             <Route path="/mentoroppapp" element={<MentoringOpportunities />} />
             <Route path="/mentorreqapp" element={<MentoringRequest />} />
-            <Route path="/external" element={<Profile />} />
+            <Route path="/external/:id" element={<Profile />} />
             <Route path='/edituser/:id' element={<UpdateProfile />} />
             <Route path='*' element={<NotFound />} />
         </Routes>
